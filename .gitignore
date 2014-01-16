@@ -1,0 +1,11 @@
+#magento directories
+var/
+media/
+sitemap/
+status/
+
+errors/local.xml
+
+#develop files
+.DS_Store
+.idea
