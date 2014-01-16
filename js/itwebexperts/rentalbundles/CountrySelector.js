@@ -19,18 +19,30 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     onCountrySelect: function (select) {
         var nextSelect = this.getNextSelect(select);
         if (nextSelect) {
-            var options = Element.select(nextSelect, 'option'),
-                selected = this.getSelectedCountries();
-
-            for (var i = 0; i < options.length; i++) {
-                if (options[i].value && (-1 < selected.indexOf(options[i].value))) {
-                    options[i].disabled = true;
-                }
+            if (nextSelect.value) {
+                this.onCountryReset(select, true);
+                return;
             }
+
+            this.hideSelectedOptions(nextSelect);
             var nextBlock = this.getBlockBySelect(nextSelect);
+
             if (nextBlock) {
                 Element.show(nextBlock);
+            }
+        }
+    },
 
+    hideSelectedOptions: function (select) {
+        var options = Element.select(select, 'option'),
+            selected = this.getSelectedCountries();
+
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].value && (-1 < selected.indexOf(options[i].value))) {
+                options[i].disabled = true;
+            }
+            else {
+                options[i].disabled = false;
             }
         }
     },
@@ -46,13 +58,13 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
             });
     },
 
-    onCountryReset: function (currentSelect) {
+    onCountryReset: function (currentSelect, noHide) {
         while (currentSelect = this.getNextSelect(currentSelect)) {
-            this.hideSelect(currentSelect);
+            this.hideSelect(currentSelect, noHide);
         }
     },
 
-    hideSelect: function (select) {
+    hideSelect: function (select, noHide) {
         var options = Element.select(select, 'option');
 
         for (var i = 0; i < options.length; i++) {
@@ -63,9 +75,11 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
             }
         }
 
-        var block = this.getBlockBySelect(select);
-        if (block) {
-            Element.hide(block);
+        if (!noHide) {
+            var block = this.getBlockBySelect(select);
+            if (block) {
+                Element.hide(block);
+            }
         }
     },
 
