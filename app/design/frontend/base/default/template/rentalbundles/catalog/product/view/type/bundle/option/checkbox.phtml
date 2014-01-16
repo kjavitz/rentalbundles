@@ -1,0 +1,91 @@
+<script type="text/javascript">
+    new ITwebexperts_Rentalbundles_Country_Selector({
+        countrySelectorClass: 'select.rentalbundles',
+        blockSelector: 'dd'
+    });
+</script>
+
+<?php
+if (!true)
+{
+?>
+<?php /* @var $this Mage_Bundle_Block_Catalog_Product_View_Type_Bundle_Option_Checkbox */ ?>
+<?php $_option = $this->getOption() ?>
+<?php $_selections = $_option->getSelections() ?>
+<dt><label<?php if ($_option->getRequired()) echo ' class="required"' ?>><?php echo $this->htmlEscape($_option->getTitle()) ?><?php if ($_option->getRequired()) echo '<em>*</em>' ?></label></dt>
+<dd<?php if ($_option->decoratedIsLast){?> class="last"<?php }?>>
+    <div class="input-box">
+    <?php if (count($_selections) == 1 && $_option->getRequired()): ?>
+        <?php echo $this->getSelectionQtyTitlePrice($_selections[0], false) ?>
+        <input type="hidden" name="bundle_option_qty1[<?php echo $_option->getId() ?>]" value="<?php echo $_selections[0]->getSelectionQty()*1; ?>"/>
+        <input type="hidden" name="bundle_option[<?php echo $_option->getId() ?>]" value="<?php echo $_selections[0]->getSelectionId() ?>"/>
+    <?php else:?>
+        <ul class="options-list">
+        <?php foreach($_selections as $_selection): ?>
+            <li><input onclick="bundle.changeSelection(this)" class="change-container-classname checkbox bundle-option-<?php echo $_option->getId() ?> <?php if ($_option->getRequired()) echo 'validate-one-required-by-name' ?>" id="bundle-option-<?php echo $_option->getId() ?>-<?php echo $_selection->getSelectionId() ?>" type="checkbox" name="bundle_option[<?php echo $_option->getId() ?>][]"<?php if ($this->_isSelected($_selection)) echo ' checked="checked"' ?><?php if (!$_selection->isSaleable()) echo ' disabled="disabled"' ?> value="<?php echo $_selection->getSelectionId() ?>"/>
+                <input type="hidden" name="bundle_option_qty1[<?php echo $_option->getId() ?>][<?php echo $_selection->getSelectionId() ?>]" value="<?php echo $_selection->getSelectionQty()*1; ?>"/>
+                <span class="label"><label for="bundle-option-<?php echo $_option->getId() ?>-<?php echo $_selection->getSelectionId() ?>"><?php echo $this->getSelectionQtyTitlePrice($_selection, false) ?></label></span>
+                <?php if($_option->getRequired()): ?>
+                    <?php echo $this->setValidationContainer('bundle-option-'.$_option->getId().'-'.$_selection->getSelectionId(), 'bundle-option-'.$_option->getId().'-container') ?>
+                <?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+        </ul>
+        <div id="bundle-option-<?php echo $_option->getId() ?>-container"></div>
+    <?php endif; ?>
+    </div>
+</dd>
+<?php
+}
+else
+{
+?>
+<?php /* @var $this Mage_Bundle_Block_Catalog_Product_View_Type_Bundle_Option_Select */ ?>
+<?php $_option      = $this->getOption(); ?>
+<?php $_selections  = $_option->getSelections(); ?>
+<?php $_default     = $_option->getDefaultSelection(); ?>
+<?php list($_defaultQty, $_canChangeQty) = $this->_getDefaultValues(); ?>
+<?php $tierPriceHtml = ''; ?>
+
+<dt>
+    <label<?php if ($_option->getRequired()) echo ' class="required"' ?>><?php echo $this->escapeHtml($_option->getTitle()) ?><?php if ($_option->getRequired()) echo '<em>*</em>' ?></label>
+</dt>
+    <?php
+    $i = 0;
+    foreach ($_selections as $_selection) {
+        $i++;
+        ?>
+<dd<?php if ($_option->decoratedIsLast){?> class="last"<?php }?> <?php echo 1 < $i ? 'style="display:none;"' : '' ?>>
+    <div class="input-box">
+        <?php /** @var $_selection Mage_Catalog_Model_Product*/ ?>
+        <?php if ($this->_showSingle()): ?>
+            <?php echo $this->getSelectionTitlePrice($_selections[0]); ?>
+            <?php if ($_selections[0]->getSelectionCanChangeQty()): ?>
+                <?php $tierPriceHtml = $this->getTierPriceHtml($_selections[0]); ?>
+            <?php endif; ?>
+            <input type="hidden" name="bundle_option[<?php echo $_option->getId() ?>]" value="<?php echo $_selections[0]->getSelectionId() ?>"/>
+        <?php else:?>
+
+            <select onchange="bundle.changeSelection(this)" id="bundle-option-<?php echo $_option->getId() ?>" name="bundle_option[<?php echo $_option->getId() ?>]" class="bundle-option-<?php echo $_option->getId() ?><?php if ($_option->getRequired()) echo ' required-entry' ?> bundle-option-select change-container-classname rentalbundles">
+                <option value=""><?php echo $this->__('Choose a selection...') ?></option>
+                <?php foreach ($_selections as $_selection): ?>
+                    <?php if ($_selection->getSelectionCanChangeQty() && $this->_isSelected($_selection)): ?>
+                        <?php $tierPriceHtml = $this->getTierPriceHtml($_selection); ?>
+                    <?php endif; ?>
+                    <option value="<?php echo $_selection->getSelectionId() ?>"<?php if ($this->_isSelected($_selection)) echo ' selected="selected"' ?><?php if (!$_selection->isSaleable()) echo ' disabled="disabled"' ?>><?php echo $this->getSelectionTitlePrice($_selection, false) ?></option>
+                <?php endforeach; ?>
+            </select>
+
+        <?php endif; ?>
+    </div>
+    <span id="bundle-option-<?php echo $_option->getId() ?>-tier-prices"> <?php echo $tierPriceHtml; ?></span>
+    <!--span class="qty-holder">
+        <label for="bundle-option-<?php echo $_option->getId() ?>-qty-input"><?php echo $this->__('Qty:') ?>&nbsp;</label><input onkeyup="bundle.changeOptionQty(this, event)" onblur="bundle.changeOptionQty(this, event)" <?php if (!$_canChangeQty) echo ' disabled="disabled"' ?> id="bundle-option-<?php echo $_option->getId() ?>-qty-input" class="input-text qty<?php if (!$_canChangeQty) echo ' qty-disabled' ?>" type="text" name="bundle_option_qty[<?php echo $_option->getId() ?>]" value="<?php echo $_defaultQty ?>"/>
+    </span-->
+</dd>
+    <?php
+    }
+    ?>
+<?php
+}
+?>

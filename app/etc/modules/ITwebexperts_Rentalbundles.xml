@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <ITwebexperts_Rentalbundles>
+            <active>true</active>
+            <codePool>community</codePool>
+            <depends>
+                <ITwebexperts_Payperrentals />
+            </depends>
+            <version>1.0.0</version>
+        </ITwebexperts_Rentalbundles>
+    </modules>
+</config>
