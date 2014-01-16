@@ -17,29 +17,57 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     },
 
     onCountrySelect: function (select) {
-        var block = this.getBlockBySelect(select);
-        if (block) {
-            var nextBlock = this.getNextBlock(block);
+        var nextSelect = this.getNextSelect(select);
+        if (nextSelect) {
+            var options = Element.select(nextSelect, 'option'),
+                selected = this.getSelectedCountries();
+
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value && (-1 < selected.indexOf(options[i].value))) {
+                    console.log(selected);
+                    console.log(options[i].value)
+                    options[i].disabled = true;
+                }
+            }
+            var nextBlock = this.getBlockBySelect(nextSelect);
             if (nextBlock) {
                 Element.show(nextBlock);
+
             }
         }
+    },
+
+    getSelectedCountries: function () {
+        // Just selecting all countries and returning their non-empty values as array
+        return this.countrySelectors
+            .findAll(function (el) {
+                return el.value
+            })
+            .collect(function (el) {
+                return el.value
+            });
     },
 
     onCountryReset: function (currentSelect) {
         while (currentSelect = this.getNextSelect(currentSelect)) {
-
+            this.hideSelect(currentSelect);
         }
     },
 
-    resetSelect: function (select) {
+    hideSelect: function (select) {
         var options = Element.select(select, 'option');
-        var len = options.length;
-        for (var i = 0; i < len; i++) {
+
+        for (var i = 0; i < options.length; i++) {
+            options[i].disabled = false;
+
             if (!options[i].value) {
                 options[i].selected = true;
-                return;
             }
+        }
+
+        var block = this.getBlockBySelect(select);
+        if (block) {
+            Element.hide(block);
         }
     },
 
