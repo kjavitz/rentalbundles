@@ -20,7 +20,7 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
         var nextSelect = this.getNextSelect(select);
         if (nextSelect) {
             if (select.value && nextSelect.value) {
-                this.onCountryReset(select, true);
+                this.onCountryReset(select);
             }
 
             this.hideSelectedOptions(nextSelect);
@@ -54,9 +54,9 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
             });
     },
 
-    onCountryReset: function (currentSelect, noHide) {
+    onCountryReset: function (currentSelect) {
         while (currentSelect = this.getNextSelect(currentSelect)) {
-            this.hideSelect(currentSelect, noHide);
+            this.hideSelect(currentSelect);
         }
     },
 
@@ -70,12 +70,9 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
                 options[i].selected = true;
             }
         }
-
-        if (!noHide) {
-            var block = this.getBlockBySelect(select);
-            if (block) {
-                Element.hide(block);
-            }
+        var block = this.getBlockBySelect(select);
+        if (block) {
+            Element.hide(block);
         }
     },
 
