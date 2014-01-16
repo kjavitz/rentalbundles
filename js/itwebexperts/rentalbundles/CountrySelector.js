@@ -24,8 +24,6 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
 
             for (var i = 0; i < options.length; i++) {
                 if (options[i].value && (-1 < selected.indexOf(options[i].value))) {
-                    console.log(selected);
-                    console.log(options[i].value)
                     options[i].disabled = true;
                 }
             }
