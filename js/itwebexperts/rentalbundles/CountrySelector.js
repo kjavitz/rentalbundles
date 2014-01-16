@@ -19,9 +19,8 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     onCountrySelect: function (select) {
         var nextSelect = this.getNextSelect(select);
         if (nextSelect) {
-            if (nextSelect.value) {
+            if (select.value && nextSelect.value) {
                 this.onCountryReset(select, true);
-                return;
             }
 
             this.hideSelectedOptions(nextSelect);
@@ -38,11 +37,8 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
             selected = this.getSelectedCountries();
 
         for (var i = 0; i < options.length; i++) {
-            if (options[i].value && (-1 < selected.indexOf(options[i].value))) {
-                options[i].disabled = true;
-            }
-            else {
-                options[i].disabled = false;
+            if (options[i].value) {
+                options[i].disabled = -1 < selected.indexOf(options[i].value);
             }
         }
     },
