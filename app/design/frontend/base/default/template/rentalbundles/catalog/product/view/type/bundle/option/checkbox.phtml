@@ -1,7 +1,8 @@
 <script type="text/javascript">
     new ITwebexperts_Rentalbundles_Country_Selector({
         countrySelectorClass: 'dd.rentalbundles select',
-        blockSelector: 'dd.rentalbundles'
+        blockSelector: 'dd.rentalbundles',
+        startDateSelector: 'dd.rentalbundles div.dateSelectorStart input'
     });
 </script>
 
@@ -53,6 +54,7 @@ else
     <?php
     $i = 0;
     foreach ($_selections as $_selection) {
+        $uniqId =
         $i++;
         ?>
 <dd class="<?php echo $last; ?>rentalbundles" <?php echo 1 < $i ? 'style="display:none;"' : '' ?>>
@@ -79,9 +81,9 @@ else
             <div class="datesSelector"
                  style="<?php if ($_selectedArray !== false && !ITwebexperts_Payperrentals_Helper_Data::useCalendarForFixedSelection()) echo 'display:none'; ?>">
                 <div class="dateStartLine">
-                    <div id="dateSelectorStart">
-                        <label for="readStartDate"><?php echo $this->__('Start Date'); ?></label>
-                        <input type="text" name="read_start_date" id="readStartDate"/>
+                    <div class="dateSelectorStart">
+                        <label for="readStartDate"><?php echo $this->__('Arrival Date'); ?></label>
+                        <input type="text" name="read_start_date[]" />
                     </div>
                 </div>
             </div>

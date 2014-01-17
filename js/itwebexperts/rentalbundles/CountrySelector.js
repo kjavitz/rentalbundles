@@ -101,6 +101,12 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     init: function () {
         this.countrySelectors = $$(this.config.countrySelectorClass);
 
+        jQuery(function($) {
+            $(this.config.startDateSelector).datepick({
+                showStatus: true
+            });
+        }.bind(this));
+
         this.countrySelectors.each(function (el) {
             Event.observe(el, 'change', this.onCountryChange.bind(this, el));
         }.bind(this))

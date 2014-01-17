@@ -1,10 +1,18 @@
-.product-options dd.rentalbundles div.dateStartLine label
-{
-    margin-left:40px;
+.product-options dd.rentalbundles div.dateStartLine label {
+    margin-left: 40px;
 }
 
-.product-options dd.rentalbundles select
-{
-    width:40%!important;
-    float:left;
+.product-options dd.rentalbundles select {
+    width: 40% !important;
+    float: left;
+}
+
+.dateSelectorStart, .dateSelectorEnd {
+    float: left;
+    margin-right: 30px
+}
+
+.dateSelectorStart label, .dateSelectorEnd label {
+    min-width: 60px;
+    display: inline-block
 }
