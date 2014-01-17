@@ -1,7 +1,7 @@
 <script type="text/javascript">
     new ITwebexperts_Rentalbundles_Country_Selector({
-        countrySelectorClass: 'select.rentalbundles',
-        blockSelector: 'dd'
+        countrySelectorClass: 'dd.rentalbundles select',
+        blockSelector: 'dd.rentalbundles'
     });
 </script>
 
@@ -55,7 +55,7 @@ else
     foreach ($_selections as $_selection) {
         $i++;
         ?>
-<dd<?php if ($_option->decoratedIsLast){?> class="last"<?php }?> <?php echo 1 < $i ? 'style="display:none;"' : '' ?>>
+<dd class="<?php echo $last; ?>rentalbundles" <?php echo 1 < $i ? 'style="display:none;"' : '' ?>>
     <div class="input-box">
         <?php /** @var $_selection Mage_Catalog_Model_Product*/ ?>
         <?php if ($this->_showSingle()): ?>
@@ -66,7 +66,7 @@ else
             <input type="hidden" name="bundle_option[<?php echo $_option->getId() ?>]" value="<?php echo $_selections[0]->getSelectionId() ?>"/>
         <?php else:?>
 
-            <select onchange="bundle.changeSelection(this)" name="bundle_option[<?php echo $_option->getId() ?>][]" class="bundle-option-<?php echo $_option->getId() ?><?php if ($_option->getRequired()) echo ' required-entry' ?> bundle-option-select change-container-classname rentalbundles">
+            <select onchange="bundle.changeSelection(this)" name="bundle_option[<?php echo $_option->getId() ?>][]" class="bundle-option-<?php echo $_option->getId() ?><?php if ($_option->getRequired()) echo ' required-entry' ?> bundle-option-select change-container-classname">
                 <option value=""><?php echo $this->__('Choose a selection...') ?></option>
                 <?php foreach ($_selections as $_selection): ?>
                     <?php if ($_selection->getSelectionCanChangeQty() && $this->_isSelected($_selection)): ?>

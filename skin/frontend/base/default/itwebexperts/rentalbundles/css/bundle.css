@@ -1,4 +1,10 @@
-.product-options dd select.rentalbundles
+.product-options dd.rentalbundles div.dateStartLine label
+{
+    margin-left:40px;
+}
+
+.product-options dd.rentalbundles select
 {
     width:40%!important;
+    float:left;
 }

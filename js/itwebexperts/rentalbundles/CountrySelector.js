@@ -85,7 +85,7 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     },
 
     getSelectByBlock: function (block) {
-        return Element.down(block, this.config.countrySelectorClass);
+        return Element.down(block, 'select');
     },
 
     getNextSelect: function (select) {
@@ -104,6 +104,5 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
         this.countrySelectors.each(function (el) {
             Event.observe(el, 'change', this.onCountryChange.bind(this, el));
         }.bind(this))
-
     }
 });
