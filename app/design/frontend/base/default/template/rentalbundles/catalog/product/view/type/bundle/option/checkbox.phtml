@@ -76,6 +76,16 @@ else
                 <?php endforeach; ?>
             </select>
 
+            <div class="datesSelector"
+                 style="<?php if ($_selectedArray !== false && !ITwebexperts_Payperrentals_Helper_Data::useCalendarForFixedSelection()) echo 'display:none'; ?>">
+                <div class="dateStartLine">
+                    <div id="dateSelectorStart">
+                        <label for="readStartDate"><?php echo $this->__('Start Date'); ?></label>
+                        <input type="text" name="read_start_date" id="readStartDate"/>
+                    </div>
+                </div>
+            </div>
+
         <?php endif; ?>
     </div>
     <span id="bundle-option-<?php echo $_option->getId() ?>-tier-prices"> <?php echo $tierPriceHtml; ?></span>
