@@ -125,14 +125,17 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     },
 
     getArrivalDateBySelect: function (select) {
-        return Element.next(select, this.config.startDateSelector);
+        var block = this.getBlockBySelect(select);
+        if (block) {
+            return Element.down(block, this.config.startDateSelector);
+        }
     },
 
     init: function () {
         this.countrySelectors = $$(this.config.countrySelectorClass);
 
         jQuery(function ($) {
-            $(this.config.startDateSelector).datepick({
+            $(this.config.blockSelector + ' ' + this.config.startDateSelector).datepick({
                 showStatus: true
             });
         }.bind(this));
