@@ -13,6 +13,16 @@
                 </rentalbundles>
             </updates>
         </layout>
+        <events>
+            <controller_action_predispatch_checkout_cart_add>
+                <observers>
+                    <inchoo_test_log_cart_add>
+                        <class>rentalbundles/observer</class>
+                        <method>onProductCardAddAction</method>
+                    </inchoo_test_log_cart_add>
+                </observers>
+            </controller_action_predispatch_checkout_cart_add>
+        </events>
     </frontend>
     <global>
         <blocks>
@@ -21,10 +31,17 @@
             </rentalbundles>
             <payperrentals>
                 <rewrite>
-                    <bundle_catalog_product_view_type_bundle_option_checkbox>ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_Option_Checkbox</bundle_catalog_product_view_type_bundle_option_checkbox>
+                    <bundle_catalog_product_view_type_bundle_option_checkbox>
+                        ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_Option_Checkbox
+                    </bundle_catalog_product_view_type_bundle_option_checkbox>
                 </rewrite>
             </payperrentals>
         </blocks>
+        <models>
+            <rentalbundles>
+                <class>ITwebexperts_Rentalbundles_Model</class>
+            </rentalbundles>
+        </models>
         <helpers>
             <rentalbundles>
                 <class>ITwebexperts_Rentalbundles_Helper</class>
