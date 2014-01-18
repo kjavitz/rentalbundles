@@ -1,7 +1,5 @@
 var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     config: {
-        validateSelectClass: 'validate-select',
-        validateDateClass: 'validate-date',
         requiredEntryClass: 'required-entry'
     },
 
@@ -21,7 +19,14 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     },
 
     onCountrySelect: function (select) {
-        var nextSelect = this.getNextSelect(select);
+        var nextSelect = this.getNextSelect(select),
+            dateInput = this.getArrivalDateBySelect(select);
+
+        this.addValidation(select);
+        if (dateInput) {
+            this.addValidation(dateInput);
+        }
+
         if (nextSelect) {
             if (select.value && nextSelect.value) {
                 this.onCountryReset(select);
@@ -48,7 +53,7 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     },
 
     getSelectedCountries: function () {
-        var filterValue = function(el) {
+        var filterValue = function (el) {
             return el.value
         };
 
@@ -62,20 +67,15 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
         }
     },
 
-    hideSelect: function (select, noHide) {
-        select
-            .removeClassName(this.config.requiredEntryClass)
-            .removeClassName(this.config.validateSelectClass);
+    hideSelect: function (select) {
+        this.removeValidation(select);
 
-        var dateSelect = this.getArrivalDateBySelect(select);
-        if (dateSelect) {
-            dateSelect
-                .removeClassName(this.config.requiredEntryClass)
-                .removeClassName(this.config.validateDateClass);
+        var dateInput = this.getArrivalDateBySelect(select);
+        if (dateInput) {
+            this.removeValidation(dateInput)
         }
 
         var options = Element.select(select, 'option');
-
         for (var i = 0; i < options.length; i++) {
             options[i].disabled = false;
 
@@ -87,6 +87,19 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
         if (block) {
             Element.hide(block);
         }
+    },
+
+    addValidation: function (el) {
+        return this.toggleValidation(el, 'add');
+    },
+
+    removeValidation: function (el) {
+        return this.toggleValidation(el, 'remove');
+    },
+
+    toggleValidation: function (el, operation) {
+        var funcName = 'add' == operation ? 'addClassName' : 'removeClassName';
+        el[funcName](this.config.requiredEntryClass);
     },
 
     getNextBlock: function (block) {
