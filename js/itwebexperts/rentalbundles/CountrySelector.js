@@ -62,6 +62,9 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     },
 
     onCountryReset: function (currentSelect) {
+        if (!this.testIfFirstSelect(currentSelect)) {
+            this.removeValidation(currentSelect);
+        }
         while (currentSelect = this.getNextSelect(currentSelect)) {
             this.hideSelect(currentSelect);
         }
@@ -69,12 +72,6 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
 
     hideSelect: function (select) {
         this.removeValidation(select);
-
-        var dateInput = this.getArrivalDateBySelect(select);
-        if (dateInput) {
-            this.removeValidation(dateInput)
-        }
-
         var options = Element.select(select, 'option');
         for (var i = 0; i < options.length; i++) {
             options[i].disabled = false;
@@ -89,11 +86,23 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
         }
     },
 
+    removeValidation: function (select) {
+        this._removeValidation(select);
+
+        var dateInput = this.getArrivalDateBySelect(select);
+        if (dateInput) {
+            this._removeValidation(dateInput);
+            if (dateInput.id && $jppr && $jppr.datepick && $jppr.datepick._clearDate) {
+                $jppr.datepick._clearDate('#' + dateInput.id);
+            }
+        }
+    },
+
     addValidation: function (el) {
         return this.toggleValidation(el, 'add');
     },
 
-    removeValidation: function (el) {
+    _removeValidation: function (el) {
         return this.toggleValidation(el, 'remove');
     },
 
@@ -128,6 +137,13 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
         var block = this.getBlockBySelect(select);
         if (block) {
             return Element.down(block, this.config.startDateSelector);
+        }
+    },
+
+    testIfFirstSelect: function (select) {
+        var block = this.getBlockBySelect(select);
+        if (block) {
+            return !Element.previous(block, this.config.blockSelector);
         }
     },
 
