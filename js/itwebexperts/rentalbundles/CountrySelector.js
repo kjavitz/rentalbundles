@@ -1,5 +1,9 @@
 var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
-    config: {},
+    config: {
+        validateSelectClass: 'validate-select',
+        validateDateClass: 'validate-date',
+        requiredEntryClass: 'required-entry'
+    },
 
     countrySelectors: null,
 
@@ -44,14 +48,12 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     },
 
     getSelectedCountries: function () {
+        var filterValue = function(el) {
+            return el.value
+        };
+
         // Just selecting all countries and returning their non-empty values as array
-        return this.countrySelectors
-            .findAll(function (el) {
-                return el.value
-            })
-            .collect(function (el) {
-                return el.value
-            });
+        return this.countrySelectors.findAll(filterValue).collect(filterValue);
     },
 
     onCountryReset: function (currentSelect) {
@@ -61,6 +63,17 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     },
 
     hideSelect: function (select, noHide) {
+        select
+            .removeClassName(this.config.requiredEntryClass)
+            .removeClassName(this.config.validateSelectClass);
+
+        var dateSelect = this.getArrivalDateBySelect(select);
+        if (dateSelect) {
+            dateSelect
+                .removeClassName(this.config.requiredEntryClass)
+                .removeClassName(this.config.validateDateClass);
+        }
+
         var options = Element.select(select, 'option');
 
         for (var i = 0; i < options.length; i++) {
@@ -98,10 +111,14 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
         }
     },
 
+    getArrivalDateBySelect: function (select) {
+        return Element.next(select, this.config.startDateSelector);
+    },
+
     init: function () {
         this.countrySelectors = $$(this.config.countrySelectorClass);
 
-        jQuery(function($) {
+        jQuery(function ($) {
             $(this.config.startDateSelector).datepick({
                 showStatus: true
             });

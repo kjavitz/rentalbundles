@@ -54,7 +54,6 @@ else
     <?php
     $i = 0;
     foreach ($_selections as $_selection) {
-        $uniqId =
         $i++;
         ?>
 <dd class="<?php echo $last; ?>rentalbundles" <?php echo 1 < $i ? 'style="display:none;"' : '' ?>>
@@ -83,7 +82,7 @@ else
                 <div class="dateStartLine">
                     <div class="dateSelectorStart">
                         <label for="readStartDate"><?php echo $this->__('Arrival Date'); ?></label>
-                        <input type="text" name="read_start_date[]" />
+                        <input type="text" name="read_start_date[]" class="validate-date required-entry"/>
                     </div>
                 </div>
             </div>
