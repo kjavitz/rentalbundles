@@ -56,7 +56,7 @@ else
     foreach ($_selections as $_selection) {
         $i++;
         ?>
-<dd class="<?php echo $_option->getRequired() ? 'last ' : ''; ?>rentalbundles" <?php echo 1 < $i ? 'style="display:none;"' : '' ?>>
+<dd class="rentalbundles" <?php echo 1 < $i ? 'style="display:none;"' : '' ?>>
     <div class="input-box">
         <?php /** @var $_selection Mage_Catalog_Model_Product*/ ?>
         <?php if ($this->_showSingle()): ?>
@@ -80,8 +80,8 @@ else
             <div class="datesSelector">
                 <div class="dateStartLine">
                     <div class="dateSelectorStart">
-                        <label for="readStartDate"><?php echo $this->__('Arrival Date'); ?></label>
-                        <input type="text" name="read_start_date[]" class="validate-date <?php if (2 > $i) echo ' required-entry' ?>"/>
+                        <label for="readStartDate<?php echo $i; ?>"><?php echo $this->__('Arrival Date'); ?></label>
+                        <input type="text" id="readStartDate<?php echo $i; ?>" name="start_date[]" class="validate-date <?php if (2 > $i) echo ' required-entry' ?>"/>
                     </div>
                 </div>
             </div>
