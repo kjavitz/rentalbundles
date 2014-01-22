@@ -1,0 +1,5 @@
+<?php
+class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexperts_Payperrentals_Model_Product_Type_Reservation
+{
+
+}

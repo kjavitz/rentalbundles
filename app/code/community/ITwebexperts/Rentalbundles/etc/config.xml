@@ -46,6 +46,12 @@
             <rentalbundles>
                 <class>ITwebexperts_Rentalbundles_Model</class>
             </rentalbundles>
+            <payperrentals>
+                <rewrite>
+                    <product_type_reservation>ITwebexperts_Rentalbundles_Model_Product_Type_Reservation</product_type_reservation>
+                    <product_type_bundle>ITwebexperts_Rentalbundles_Model_Product_Type_Bundle</product_type_bundle>
+                </rewrite>
+            </payperrentals>
         </models>
         <helpers>
             <rentalbundles>
