@@ -8,7 +8,7 @@
     <default>
         <rentalbundles>
             <general>
-                <mobile_kit_sku>multi-kit</mobile_kit_sku>
+                <mobile_kit_sku>mobile-kit</mobile_kit_sku>
             </general>
         </rentalbundles>
     </default>
