@@ -2,7 +2,8 @@
     new ITwebexperts_Rentalbundles_Country_Selector({
         countrySelectorClass: 'dd.rentalbundles select',
         blockSelector: 'dd.rentalbundles',
-        startDateSelector: 'div.dateSelectorStart input'
+        startDateSelector: 'div.dateSelectorStart input',
+        bundleDateInputsSelector: 'div.dateSelectorStart input'
     });
 </script>
 
@@ -14,19 +15,19 @@
 <?php list($_defaultQty, $_canChangeQty) = $this->_getDefaultValues(); ?>
 <?php $tierPriceHtml = ''; ?>
 
-<dd class="rentalbundles">
+<dd class="rentalbundledates">
     <div class="input-box">
         <div class="datesSelector">
             <div class="dateStartLine">
                 <div class="dateSelectorStart">
-                    <label for="readStartDate"><?php echo $this->__('Requested Delivery Date'); ?></label>
-                    <input type="text" name="bundle_start_date" class="validate-date  required-entry hasDatepick">
+                    <label for="bundle_start_date"><?php echo $this->__('Requested Delivery Date'); ?></label>
+                    <input type="text" id="bundle_start_date" name="bundle_start_date" class="validate-date  required-entry" />
                 </div>
             </div>
             <div class="dateEndLine">
                 <div class="dateSelectorEnd">
-                    <label for="readEndDate"><?php echo $this->__('Trip Return Date'); ?></label>
-                    <input type="text" name="bundle_end_date" class="validate-date  required-entry hasDatepick">
+                    <label for="bundle_end_date"><?php echo $this->__('Trip Return Date'); ?></label>
+                    <input type="text" id="bundle_end_date" name="bundle_end_date" class="validate-date  required-entry" />
                 </div>
             </div>
         </div>

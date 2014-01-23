@@ -1,4 +1,4 @@
-.product-options dd.rentalbundles {
+.product-options dd.rentalbundles, .product-options dd.rentalbundledates {
     border: none;
     margin-bottom: 10px;
 }
@@ -20,4 +20,12 @@
 .dateSelectorStart label, .dateSelectorEnd label {
     min-width: 60px;
     display: inline-block
+}
+
+.product-options dd.rentalbundledates .dateSelectorEnd {
+    float: left;
+}
+
+.product-options dd.rentalbundledates input {
+    width: 110px;
 }

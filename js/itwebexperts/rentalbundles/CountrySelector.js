@@ -151,7 +151,8 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
         this.countrySelectors = $$(this.config.countrySelectorClass);
 
         jQuery(function ($) {
-            $(this.config.blockSelector + ' ' + this.config.startDateSelector).datepick({
+            $(this.config.blockSelector + ' ' + this.config.startDateSelector + ', '
+                + this.config.bundleDateInputsSelector).datepick({
                 showStatus: true
             });
         }.bind(this));
