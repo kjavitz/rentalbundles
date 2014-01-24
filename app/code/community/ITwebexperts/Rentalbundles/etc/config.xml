@@ -62,6 +62,7 @@
             <rentalbundles_setup>
                 <setup>
                     <module>ITwebexperts_Rentalbundles</module>
+                    <class>Mage_Sales_Model_Resource_Setup</class>
                 </setup>
                 <connection>
                     <use>core_setup</use>
