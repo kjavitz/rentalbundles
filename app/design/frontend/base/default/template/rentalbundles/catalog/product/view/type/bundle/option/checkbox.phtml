@@ -21,13 +21,13 @@
             <div class="dateStartLine">
                 <div class="dateSelectorStart">
                     <label for="bundle_start_date"><?php echo $this->__('Requested Delivery Date'); ?></label>
-                    <input type="text" id="bundle_start_date" name="bundle_start_date" class="validate-date  required-entry" />
+                    <input type="text" id="bundle_start_date" name="start_date" class="validate-date  required-entry" />
                 </div>
             </div>
             <div class="dateEndLine">
                 <div class="dateSelectorEnd">
                     <label for="bundle_end_date"><?php echo $this->__('Trip Return Date'); ?></label>
-                    <input type="text" id="bundle_end_date" name="bundle_end_date" class="validate-date  required-entry" />
+                    <input type="text" id="bundle_end_date" name="end_date" class="validate-date required-entry" />
                 </div>
             </div>
         </div>
@@ -67,7 +67,7 @@
                 <div class="dateStartLine">
                     <div class="dateSelectorStart">
                         <label for="readStartDate<?php echo $i; ?>"><?php echo $this->__('Arrival Date'); ?></label>
-                        <input type="text" id="readStartDate<?php echo $i; ?>" name="start_date[]" class="validate-date <?php if (2 > $i) echo ' required-entry' ?>"/>
+                        <input type="text" id="readStartDate<?php echo $i; ?>" name="country_start_date[]" class="validate-date <?php if (2 > $i) echo ' required-entry' ?>"/>
                     </div>
                 </div>
             </div>
