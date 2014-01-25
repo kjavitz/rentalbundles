@@ -1,5 +1,0 @@
-<?php
-class ITwebexperts_Rentalbundles_Model_Product_Type_Bundle extends ITwebexperts_Payperrentals_Model_Product_Type_Bundle
-{
-
-}
