@@ -30,7 +30,7 @@
                     </fields>
                 </general>
                 <countries translate="label">
-                    <label>CDATA[Countries vs SIMs Compatibility</label>
+                    <label>Countries vs SIMs Compatibility</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>20</sort_order>
                     <show_in_default>1</show_in_default>
