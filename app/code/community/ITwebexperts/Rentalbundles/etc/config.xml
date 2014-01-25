@@ -20,16 +20,6 @@
                 </rentalbundles>
             </updates>
         </layout>
-        <events>
-            <controller_action_predispatch_checkout_cart_add>
-                <observers>
-                    <rentalbundles_kit_add_cart>
-                        <class>rentalbundles/observer</class>
-                        <method>onProductCardAddAction</method>
-                    </rentalbundles_kit_add_cart>
-                </observers>
-            </controller_action_predispatch_checkout_cart_add>
-        </events>
     </frontend>
     <global>
         <blocks>
@@ -49,7 +39,6 @@
             <payperrentals>
                 <rewrite>
                     <product_type_reservation>ITwebexperts_Rentalbundles_Model_Product_Type_Reservation</product_type_reservation>
-                    <product_type_bundle>ITwebexperts_Rentalbundles_Model_Product_Type_Bundle</product_type_bundle>
                 </rewrite>
             </payperrentals>
         </models>
