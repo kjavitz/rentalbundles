@@ -3,17 +3,17 @@ $installer = $this;
 $installer->startSetup();
 
 $groupLabel = 'Rental Bundles';
-$isCountry = 'rentalbundles_is_country';
-$isSIM = 'rentalbundles_is_sim';
+$type = 'rentalbundles_type';
+$simCountries = 'rentalbundles_sim_countries';
 
 Mage::getResourceModel('catalog/setup', 'catalog_setup')->addAttribute(
-    Mage_Catalog_Model_Product::ENTITY, $isCountry,
+    Mage_Catalog_Model_Product::ENTITY, $type,
     array(
         'group' => $groupLabel,
-        'label' => 'Consider as Country',
+        'label' => 'Type',
         'type' => 'int',
         'input' => 'select',
-        'source' => 'eav/entity_attribute_source_boolean',
+        'source' => 'rentalbundles/system_config_source_type',
         'global' => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_WEBSITE,
         'visible' => true,
         'required' => false,
@@ -26,13 +26,14 @@ Mage::getResourceModel('catalog/setup', 'catalog_setup')->addAttribute(
 );
 
 Mage::getResourceModel('catalog/setup', 'catalog_setup')->addAttribute(
-    Mage_Catalog_Model_Product::ENTITY, $isSIM,
+    Mage_Catalog_Model_Product::ENTITY, $simCountries,
     array(
+        'backend' => 'eav/entity_attribute_backend_array',
+        'source' => 'rentalbundles/system_config_source_countries',
         'group' => $groupLabel,
-        'label' => 'Consider as SIM',
-        'type' => 'int',
-        'input' => 'select',
-        'source' => 'eav/entity_attribute_source_boolean',
+        'label' => 'Countries vs SIMs',
+        'input' => 'multiselect',
+        'type' => 'varchar',
         'global' => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_WEBSITE,
         'visible' => true,
         'required' => false,
@@ -41,22 +42,20 @@ Mage::getResourceModel('catalog/setup', 'catalog_setup')->addAttribute(
         'apply_to' => 'reservation',
         'visible_on_front' => false,
         'position' => 20,
-    )
-);
+    ));
 
 $entityTypeId = $installer->getEntityTypeId('catalog_product');
-$countryAttributeId  = $installer->getAttributeId('catalog_product', $isCountry);
-$simAttributeId = $installer->getAttributeId('catalog_product', $isSIM);
+$typeAttributeId = $installer->getAttributeId('catalog_product', $type);
+$simCountriesAttributeId = $installer->getAttributeId('catalog_product', $simCountries);
 
-
-$attributeSets = $installer->_conn->fetchAll('select * from '.$this->getTable('eav/attribute_set').' where entity_type_id=?', $entityTypeId);
+$attributeSets = $installer->_conn->fetchAll('select * from ' . $this->getTable('eav/attribute_set') . ' where entity_type_id=?', $entityTypeId);
 
 foreach ($attributeSets as $attributeSet) {
     $setId = $attributeSet['attribute_set_id'];
     $installer->addAttributeGroup($entityTypeId, $setId, $groupLabel);
     $groupId = $installer->getAttributeGroupId($entityTypeId, $setId, $groupLabel);
-    $installer->addAttributeToGroup($entityTypeId, $setId, $groupId, $countryAttributeId);
-    $installer->addAttributeToGroup($entityTypeId, $setId, $groupId, $simAttributeId);
+    $installer->addAttributeToGroup($entityTypeId, $setId, $groupId, $typeAttributeId);
+    $installer->addAttributeToGroup($entityTypeId, $setId, $groupId, $simCountriesAttributeId);
 }
 
 $installer->endSetup();
