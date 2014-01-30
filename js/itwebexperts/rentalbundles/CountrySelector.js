@@ -62,7 +62,7 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     },
 
     onCountryReset: function (currentSelect) {
-        if (!this.testIfFirstSelect(currentSelect)) {
+        if (!this.testIfFirstSelect(currentSelect) && !currentSelect.value) {
             this.removeValidation(currentSelect);
         }
         while (currentSelect = this.getNextSelect(currentSelect)) {
