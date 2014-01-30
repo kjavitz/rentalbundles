@@ -38,7 +38,7 @@ class ITwebexperts_Rentalbundles_Model_System_Config_Source_Type extends Mage_Ea
         $options = array();
         $options[] = array(
             'value' => '',
-            'label' => Mage::helper('rentalbundles')->__('Not Set')
+            'label' => Mage::helper('rentalbundles')->__('-- Not Set --')
         );
 
         $options[] = array(
