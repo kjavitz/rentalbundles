@@ -4,7 +4,7 @@ $installer->startSetup();
 
 $groupLabel = 'Rental Bundles';
 $type = 'rentalbundles_type';
-$simCountries = 'rentalbundles_sim_countries';
+$simCountries = 'rentalbundles_country_sims';
 $priority = 'rentalbundles_priority';
 
 Mage::getResourceModel('catalog/setup', 'catalog_setup')->addAttribute(
@@ -30,9 +30,9 @@ Mage::getResourceModel('catalog/setup', 'catalog_setup')->addAttribute(
     Mage_Catalog_Model_Product::ENTITY, $simCountries,
     array(
         'backend' => 'eav/entity_attribute_backend_array',
-        'source' => 'rentalbundles/system_config_source_countries',
+        'source' => 'rentalbundles/system_config_source_sims',
         'group' => $groupLabel,
-        'label' => 'Countries vs SIMs',
+        'label' => 'Assign to SIMs',
         'input' => 'multiselect',
         'type' => 'varchar',
         'global' => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_WEBSITE,
@@ -51,7 +51,7 @@ Mage::getResourceModel('catalog/setup', 'catalog_setup')->addAttribute(
         'backend' => 'eav/entity_attribute_backend_array',
         'source' => 'rentalbundles/system_config_source_countries',
         'group' => $groupLabel,
-        'label' => 'Priority',
+        'label' => 'SIM Priority',
         'input' => 'text',
         'type' => 'int',
         'global' => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_WEBSITE,

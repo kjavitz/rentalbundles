@@ -1,6 +1,6 @@
 <?php
 
-class ITwebexperts_Rentalbundles_Model_System_Config_Source_Countries extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
+class ITwebexperts_Rentalbundles_Model_System_Config_Source_Sims extends Mage_Eav_Model_Entity_Attribute_Source_Abstract
 {
     protected static $_collection = null;
 
@@ -14,7 +14,7 @@ class ITwebexperts_Rentalbundles_Model_System_Config_Source_Countries extends Ma
         if (is_null(self::$_collection)) {
             self::$_collection = Mage::getModel('catalog/product')->getCollection();
             self::$_collection
-                ->addAttributeToFilter('rentalbundles_type', array('eq' => ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY))
+                ->addAttributeToFilter('rentalbundles_type', array('eq' => ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_SIM))
                 ->addAttributeToSelect('name') //joining the name attribute
                 ->setOrder('name', Mage_Eav_Model_Entity_Collection_Abstract::SORT_ORDER_ASC);
         }
@@ -45,9 +45,7 @@ class ITwebexperts_Rentalbundles_Model_System_Config_Source_Countries extends Ma
      */
     static public function getAllOption()
     {
-        $options = self::getOptionArray();
-        array_unshift($options, array('value' => '', 'label' => ''));
-        return $options;
+        return self::getOptionArray();
     }
 
     /**
@@ -58,14 +56,9 @@ class ITwebexperts_Rentalbundles_Model_System_Config_Source_Countries extends Ma
     public function getAllOptions()
     {
         $options = array();
-        $options[] = array(
-            'value' => '',
-            'label' => Mage::helper('rentalbundles')->__('-- Please Select --')
-        );
-
         foreach (self::_getCollection() as $country) {
             $options[] = array(
-                'country' => $country->getId(),
+                'value' => $country->getId(),
                 'label' => $country->getName(),
             );
         }
