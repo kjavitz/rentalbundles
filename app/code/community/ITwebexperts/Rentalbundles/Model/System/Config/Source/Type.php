@@ -3,16 +3,19 @@ class ITwebexperts_Rentalbundles_Model_System_Config_Source_Type extends Mage_Ea
 {
     const TYPE_COUNTRY = 1;
     const TYPE_SIM = 2;
+    const TYPE_DEVICE = 3;
 
     /**
      * Returns options array.
      *
      * @return array
      */
-    static public function getOptionArray(){
+    static public function getOptionArray()
+    {
         return array(
-            self::TYPE_COUNTRY    => Mage::helper('rentalbundles')->__('Country'),
-            self::TYPE_SIM   => Mage::helper('rentalbundles')->__('SIM')
+            self::TYPE_COUNTRY => Mage::helper('rentalbundles')->__('Country'),
+            self::TYPE_SIM => Mage::helper('rentalbundles')->__('SIM'),
+            self::TYPE_DEVICE => Mage::helper('rentalbundles')->__('Device'),
         );
     }
 
@@ -24,7 +27,7 @@ class ITwebexperts_Rentalbundles_Model_System_Config_Source_Type extends Mage_Ea
     static public function getAllOption()
     {
         $options = self::getOptionArray();
-        array_unshift($options, array('value'=>'', 'label'=>''));
+        array_unshift($options, array('value' => '', 'label' => ''));
         return $options;
     }
 
@@ -41,15 +44,12 @@ class ITwebexperts_Rentalbundles_Model_System_Config_Source_Type extends Mage_Ea
             'label' => Mage::helper('rentalbundles')->__('-- Not Set --')
         );
 
-        $options[] = array(
-            'value' => self::TYPE_COUNTRY,
-            'label' => Mage::helper('rentalbundles')->__('Country')
-        );
-
-        $options[] = array(
-            'value' => self::TYPE_SIM,
-            'label' => Mage::helper('rentalbundles')->__('SIM')
-        );
+        foreach (self::getOptionArray() as $type => $name) {
+            $options[] = array(
+                'value' => $type,
+                'label' => $name,
+            );
+        }
 
         return $options;
     }
