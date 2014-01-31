@@ -24,4 +24,22 @@ class ITwebexperts_Rentalbundles_Helper_Data extends Mage_Core_Helper_Abstract
     {
         return Mage::getStoreConfig(self::PATH_MOBILE_KIT_SKU);
     }
+
+    /**
+     * @param Mage_Catalog_Model_Product $product
+     * @return mixed
+     */
+    public function getOptionsCollection(Mage_Catalog_Model_Product $product)
+    {
+        $options = $product->getTypeInstance(true)
+            ->getOptionsCollection($product);
+        $selections = $product->getTypeInstance(true)
+            ->getSelectionsCollection(
+                $product->getTypeInstance(true)->getOptionsIds($product),
+                $product
+            );
+
+        $options->appendSelections($selections);
+        return $options;
+    }
 }
