@@ -88,10 +88,16 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
         }
 
         $startDate = $countryStartDates[$key];
-        $endDate = isset($countryStartDates[$key + 1]) ? $countryStartDates[$key + 1] : $buyRequest->getData('end_date');
-        $product
-            ->addCustomOption(self::COUNTRY_START_DATE, $startDate, $product)
-            ->addCustomOption(self::COUNTRY_END_DATE, $endDate, $product);
+        $endDate = $buyRequest->getData('end_date');
+        if (isset($countryStartDates[$key + 1]) && $countryStartDates[$key + 1]) {
+            $endDate = $countryStartDates[$key + 1];
+        }
+
+        if ($startDate && $endDate) {
+            $product
+                ->addCustomOption(self::COUNTRY_START_DATE, $startDate, $product)
+                ->addCustomOption(self::COUNTRY_END_DATE, $endDate, $product);
+        }
     }
 
     /**
