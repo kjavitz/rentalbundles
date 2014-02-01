@@ -41,7 +41,7 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
             return;
         }
 
-        $bundle = $this->_initBundle($buyRequest->getProduct());
+        $bundle = $this->_getModuleHelper()->initBundle($buyRequest->getProduct());
         if (!$bundle) {
             return;
         }
@@ -98,26 +98,6 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
                 ->addCustomOption(self::COUNTRY_START_DATE, $startDate, $product)
                 ->addCustomOption(self::COUNTRY_END_DATE, $endDate, $product);
         }
-    }
-
-    /**
-     * Initialises the bundle product.
-     *
-     * @param mixed $productId
-     * @return Mage_Core_Model_Product|null
-     */
-    protected function _initBundle($productId)
-    {
-        if (!$productId) {
-            return;
-        }
-
-        $product = Mage::getModel('catalog/product')->load($productId);
-        if (Mage_Catalog_Model_Product_Type::TYPE_BUNDLE != $product->getTypeId()) {
-            return;
-        }
-
-        return $product;
     }
 
     /**

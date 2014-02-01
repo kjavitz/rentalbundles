@@ -42,4 +42,24 @@ class ITwebexperts_Rentalbundles_Helper_Data extends Mage_Core_Helper_Abstract
         $options->appendSelections($selections);
         return $options;
     }
+
+    /**
+     * Initialises the bundle product.
+     *
+     * @param mixed $productId
+     * @return Mage_Core_Model_Product|null
+     */
+    public function initBundle($productId)
+    {
+        if (!$productId) {
+            return;
+        }
+
+        $product = Mage::getModel('catalog/product')->load($productId);
+        if (Mage_Catalog_Model_Product_Type::TYPE_BUNDLE != $product->getTypeId()) {
+            return;
+        }
+
+        return $product;
+    }
 }
