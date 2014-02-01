@@ -20,6 +20,16 @@
                 </rentalbundles>
             </updates>
         </layout>
+        <events>
+            <controller_action_predispatch_checkout_cart_add>
+                <observers>
+                    <rentalbundles_kit_add_cart>
+                        <class>rentalbundles/observer</class>
+                        <method>onProductCardAddAction</method>
+                    </rentalbundles_kit_add_cart>
+                </observers>
+            </controller_action_predispatch_checkout_cart_add>
+        </events>
     </frontend>
     <global>
         <blocks>
