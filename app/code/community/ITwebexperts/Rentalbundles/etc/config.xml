@@ -39,6 +39,7 @@
             <payperrentals>
                 <rewrite>
                     <bundle_catalog_product_view_type_bundle_option_checkbox>ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_Option_Checkbox</bundle_catalog_product_view_type_bundle_option_checkbox>
+                    <bundle_catalog_product_view_type_bundle_option_multi>ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_Option_Multi</bundle_catalog_product_view_type_bundle_option_multi>
                 </rewrite>
             </payperrentals>
         </blocks>
