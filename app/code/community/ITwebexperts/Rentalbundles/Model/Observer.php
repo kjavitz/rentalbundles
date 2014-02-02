@@ -9,7 +9,6 @@ class ITwebexperts_Rentalbundles_Model_Observer
      */
     public function onProductCardAddAction(Varien_Event_Observer $observer)
     {
-        return;
         $request = Mage::app()->getRequest();
 
         $bundle = $this->_getModuleHelper()->initBundle($request->getParam('product'));
@@ -85,11 +84,14 @@ class ITwebexperts_Rentalbundles_Model_Observer
             }
         }
 
+        $finalSims = array_unique($finalSims);
+
         if (empty($finalSims)) {
             return;
         }
 
         $simOption = null;
+        $finalSims2 = array();
         foreach ($options as $option) {
             if ($simOption) {
                 break;
@@ -108,10 +110,28 @@ class ITwebexperts_Rentalbundles_Model_Observer
             return;
         }
 
-        $bundlesRequest = array();
-        foreach ($finalSims as $simId)
+        foreach ($finalSims as $sim)
         {
+            foreach ($simOption->getSelections() as $simSelection)
+            {
+                if ($sim == $simSelection->getId())
+                {
+                    $finalSims2[] = $simSelection->getSelectionId();
+                }
+            }
         }
+
+        $finalSims2 = array_unique($finalSims2);
+
+        if (empty($finalSims2))
+        {
+            return;
+        }
+
+        unset($bundleOptions[$simOption->getId()]);
+        $bundleOptions[$simOption->getId()] = $finalSims2;
+        $request->setParam(ITwebexperts_Rentalbundles_Model_Product_Type_Reservation::BUNDLE_OPTIONS_FIELD, $bundleOptions);
+
     }
 
     /**
