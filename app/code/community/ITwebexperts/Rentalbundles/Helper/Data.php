@@ -12,7 +12,7 @@ class ITwebexperts_Rentalbundles_Helper_Data extends Mage_Core_Helper_Abstract
     public function isKitProduct(Varien_Object $product)
     {
         return (false !== stripos($this->getMobileKitSku(), $product->getSku()))
-            && (Mage_Catalog_Model_Product_Type::TYPE_BUNDLE == $product->getTypeId());
+        && (Mage_Catalog_Model_Product_Type::TYPE_BUNDLE == $product->getTypeId());
     }
 
     /**
@@ -61,5 +61,33 @@ class ITwebexperts_Rentalbundles_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $product;
+    }
+
+    /**
+     * Returns bundle option by rental bundle type.
+     *
+     * @param Mage_Catalog_Model_Product $product
+     * @param string $type
+     * @return Mage_Bundle_Model_Option|null
+     */
+    public function getOptionBySelectionType(Mage_Catalog_Model_Product $product, $type)
+    {
+        if (!$type) {
+            return;
+        }
+
+        $options = $this->getHelper()->getOptionsCollection($product);
+        if (!$options) {
+            return;
+        }
+
+        foreach ($options as $option) {
+            foreach ($option->getSelections() as $selection) {
+                $selection = Mage::getModel('catalog/product')->load($selection->getId());
+                if ($type == $selection->getRentalbundlesType()) {
+                    return $option;
+                }
+            }
+        }
     }
 }

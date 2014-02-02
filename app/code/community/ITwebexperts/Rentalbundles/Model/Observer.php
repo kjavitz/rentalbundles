@@ -16,22 +16,7 @@ class ITwebexperts_Rentalbundles_Model_Observer
             return;
         }
 
-        $countryOption = null;
-        $options = $this->getHelper()->getOptionsCollection($bundle);
-
-        foreach ($options as $option) {
-            if ($countryOption) {
-                break;
-            }
-
-            foreach ($option->getSelections() as $selection) {
-                $selection = Mage::getModel('catalog/product')->load($selection->getId());
-                if (ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY == $selection->getRentalbundlesType()) {
-                    $countryOption = $option;
-                    break;
-                }
-            }
-        }
+        $countryOption = $this->getHelper()->getOptionBySelectionType($bundle, ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY);
 
         if (!$countryOption) {
             return;
@@ -92,19 +77,7 @@ class ITwebexperts_Rentalbundles_Model_Observer
 
         $simOption = null;
         $chosenSims = array();
-        foreach ($options as $option) {
-            if ($simOption) {
-                break;
-            }
-
-            foreach ($option->getSelections() as $selection) {
-                $selection = Mage::getModel('catalog/product')->load($selection->getId());
-                if (ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_SIM == $selection->getRentalbundlesType()) {
-                    $simOption = $option;
-                    break;
-                }
-            }
-        }
+        $simOption = $this->getHelper()->getOptionBySelectionType($bundle, ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_SIM);
 
         if (!$simOption) {
             return;
