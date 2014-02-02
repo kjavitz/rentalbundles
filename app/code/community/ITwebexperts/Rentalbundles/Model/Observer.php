@@ -11,13 +11,13 @@ class ITwebexperts_Rentalbundles_Model_Observer
     {
         $request = Mage::app()->getRequest();
 
-        $bundle = $this->_getModuleHelper()->initBundle($request->getParam('product'));
+        $bundle = $this->getHelper()->initBundle($request->getParam('product'));
         if (!$bundle) {
             return;
         }
 
         $countryOption = null;
-        $options = $this->_getModuleHelper()->getOptionsCollection($bundle);
+        $options = $this->getHelper()->getOptionsCollection($bundle);
 
         foreach ($options as $option) {
             if ($countryOption) {
@@ -79,7 +79,7 @@ class ITwebexperts_Rentalbundles_Model_Observer
                 if ($SIMs[$country->getId()]) {
                     // Sorting SIMs by priority
                     arsort($SIMs[$country->getId()]);
-                    $finalSims[] = current($SIMs[$country->getId()]);
+                    $finalSims[] = key($SIMs[$country->getId()]);
                 }
             }
         }
@@ -91,7 +91,7 @@ class ITwebexperts_Rentalbundles_Model_Observer
         }
 
         $simOption = null;
-        $finalSims2 = array();
+        $chosenSims = array();
         foreach ($options as $option) {
             if ($simOption) {
                 break;
@@ -110,26 +110,22 @@ class ITwebexperts_Rentalbundles_Model_Observer
             return;
         }
 
-        foreach ($finalSims as $sim)
-        {
-            foreach ($simOption->getSelections() as $simSelection)
-            {
-                if ($sim == $simSelection->getId())
-                {
-                    $finalSims2[] = $simSelection->getSelectionId();
+        foreach ($finalSims as $sim) {
+            foreach ($simOption->getSelections() as $simSelection) {
+                if ($sim == $simSelection->getId()) {
+                    $chosenSims[] = $simSelection->getSelectionId();
                 }
             }
         }
 
-        $finalSims2 = array_unique($finalSims2);
+        $chosenSims = array_unique($chosenSims);
 
-        if (empty($finalSims2))
-        {
+        if (empty($chosenSims)) {
             return;
         }
 
         unset($bundleOptions[$simOption->getId()]);
-        $bundleOptions[$simOption->getId()] = $finalSims2;
+        $bundleOptions[$simOption->getId()] = $chosenSims;
         $request->setParam(ITwebexperts_Rentalbundles_Model_Product_Type_Reservation::BUNDLE_OPTIONS_FIELD, $bundleOptions);
 
     }
