@@ -76,7 +76,7 @@ class ITwebexperts_Rentalbundles_Helper_Data extends Mage_Core_Helper_Abstract
             return;
         }
 
-        $options = $this->getHelper()->getOptionsCollection($product);
+        $options = $this->getOptionsCollection($product);
         if (!$options) {
             return;
         }
