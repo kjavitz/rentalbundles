@@ -5,13 +5,6 @@
             <version>1.0.0</version>
         </ITwebexperts_Rentalbundles>
     </modules>
-    <default>
-        <rentalbundles>
-            <general>
-                <mobile_kit_sku>mobile-kit</mobile_kit_sku>
-            </general>
-        </rentalbundles>
-    </default>
     <frontend>
         <layout>
             <updates>
