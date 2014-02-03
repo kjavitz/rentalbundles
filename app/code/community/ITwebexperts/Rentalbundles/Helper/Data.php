@@ -1,17 +1,6 @@
 <?php
 class ITwebexperts_Rentalbundles_Helper_Data extends Mage_Core_Helper_Abstract
 {
-    const PATH_MOBILE_KIT_SKU = 'rentalbundles/general/mobile_kit_sku';
-
-    /**
-     * Returns SKU of a mobile kit product
-     *
-     * @return mixed
-     */
-    public function getMobileKitSku()
-    {
-        return Mage::getStoreConfig(self::PATH_MOBILE_KIT_SKU);
-    }
 
     /**
      * @param Mage_Catalog_Model_Product $product
