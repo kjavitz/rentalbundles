@@ -12,7 +12,7 @@ class ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_O
         $product = parent::getProduct();
         if ($product instanceof Mage_Catalog_Model_Product) {
             if ($this->_getModuleHelper()->getOptionBySelectionType($product, ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_SIM)) {
-                return '';
+                //return '';
             }
         }
         return parent::_toHtml();
