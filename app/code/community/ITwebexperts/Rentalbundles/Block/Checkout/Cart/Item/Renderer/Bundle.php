@@ -1,0 +1,4 @@
+<?php
+class ITwebexperts_Rentalbundles_Block_Checkout_Cart_Item_Renderer_Bundle extends ITwebexperts_Payperrentals_Block_Checkout_Cart_Item_Renderer_Bundle
+{
+}

@@ -33,6 +33,7 @@
                 <rewrite>
                     <bundle_catalog_product_view_type_bundle_option_checkbox>ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_Option_Checkbox</bundle_catalog_product_view_type_bundle_option_checkbox>
                     <bundle_catalog_product_view_type_bundle_option_multi>ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_Option_Multi</bundle_catalog_product_view_type_bundle_option_multi>
+                    <checkout_cart_item_renderer_bundle>ITwebexperts_Rentalbundles_Block_Checkout_Cart_Item_Renderer_Bundle</checkout_cart_item_renderer_bundle>
                 </rewrite>
             </payperrentals>
         </blocks>
