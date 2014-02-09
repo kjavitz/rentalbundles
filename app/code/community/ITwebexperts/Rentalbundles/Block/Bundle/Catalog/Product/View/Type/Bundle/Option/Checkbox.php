@@ -7,17 +7,19 @@ class ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_O
      *
      * @return void
      */
-    protected function _construct()
+    protected function _toHtml()
     {
         $product = parent::getProduct();
+        $currentOption = $this->getOption();
+
         if ($product instanceof Mage_Catalog_Model_Product) {
-            if ($this->_getModuleHelper()->getOptionBySelectionType($product, ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY)) {
+            $option = $this->_getModuleHelper()->getOptionBySelectionType($product, ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY);
+            if ($option && $currentOption && ($currentOption->getId() == $option->getId())) {
                 $this->setTemplate('rentalbundles/catalog/product/view/type/bundle/option/checkbox.phtml');
-                return;
             }
         }
 
-        return parent::_construct();
+        return parent::_toHtml();
     }
 
 

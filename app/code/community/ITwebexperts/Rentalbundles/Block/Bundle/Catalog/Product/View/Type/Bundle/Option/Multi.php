@@ -10,8 +10,11 @@ class ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_O
     protected function _toHtml()
     {
         $product = parent::getProduct();
+        $currentOption = $this->getOption();
+
         if ($product instanceof Mage_Catalog_Model_Product) {
-            if ($this->_getModuleHelper()->getOptionBySelectionType($product, ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_SIM)) {
+            $option = $this->_getModuleHelper()->getOptionBySelectionType($product, ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_SIM);
+            if ($option && $currentOption && ($currentOption->getId() == $option->getId())) {
                 return '';
             }
         }
