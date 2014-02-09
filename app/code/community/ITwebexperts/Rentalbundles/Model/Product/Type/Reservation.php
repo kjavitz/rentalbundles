@@ -1,4 +1,5 @@
 <?php
+
 class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexperts_Payperrentals_Model_Product_Type_Reservation
 {
     const COUNTRY_START_DATE = 'country_start_date';
@@ -20,15 +21,21 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
         if (!$product) {
             $product = $this->getProduct();
         }
-        $this->_processCountry($buyRequest, $product);
 
-        return parent::prepareForCartAdvanced($buyRequest, $product, $processMode);
+        // We want to modify booking dates for countries
+        // according to start/end dates for each country on FE
+        // So we need to pass modified $buyRequest to the parent method in such case.
+        // This method only modifies $buyRequest for countries products.
+        $newBuyRequest = $this->_processCountry($buyRequest, $product);
+        return parent::prepareForCartAdvanced($newBuyRequest ? $newBuyRequest : $buyRequest, $product, $processMode);
     }
 
     /**
      * Processes country reservation product.
+     *
      * @param Varien_Object $buyRequest
      * @param Mage_Catalog_Model_Product $product
+     * @return Varien_Object|null
      */
     protected function _processCountry(Varien_Object $buyRequest, Mage_Catalog_Model_Product $product)
     {
@@ -93,11 +100,20 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
             $endDate = $countryStartDates[$key + 1];
         }
 
-        if ($startDate && $endDate) {
-            $product
-                ->addCustomOption(self::COUNTRY_START_DATE, $startDate, $product)
-                ->addCustomOption(self::COUNTRY_END_DATE, $endDate, $product);
+        if (!$startDate || !$endDate) {
+            return;
         }
+
+        // I don't want to modify $buyRequest
+        // because it may be used somewhere else
+        // It's better to clone it
+        // and modify the cloned object.
+        $newBuyRequest = clone $buyRequest;
+        $newBuyRequest
+            ->setData(self::START_DATE_OPTION, $startDate)
+            ->setData(self::END_DATE_OPTION, $endDate);
+
+        return $newBuyRequest;
     }
 
     /**
