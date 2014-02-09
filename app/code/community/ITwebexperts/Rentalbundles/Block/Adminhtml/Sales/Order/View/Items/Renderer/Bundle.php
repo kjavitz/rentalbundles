@@ -1,0 +1,5 @@
+<?php
+class ITwebexperts_Rentalbundles_Block_Adminhtml_Sales_Order_View_Items_Renderer_Bundle extends ITwebexperts_Payperrentals_Block_Adminhtml_Sales_Order_View_Items_Renderer_Bundle
+{
+
+}
