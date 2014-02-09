@@ -2,6 +2,13 @@
 
 class ITwebexperts_Rentalbundles_Block_Adminhtml_Sales_Order_View_Items_Renderer_Bundle extends ITwebexperts_Payperrentals_Block_Adminhtml_Sales_Order_View_Items_Renderer_Bundle
 {
+    /**
+     * This method adds information about arrival dates for countries
+     * to sales order view page in admin.
+     *
+     * @param $item
+     * @return string
+     */
     public function getValueHtml($item)
     {
         $result = parent::getValueHtml($item);
@@ -34,6 +41,10 @@ class ITwebexperts_Rentalbundles_Block_Adminhtml_Sales_Order_View_Items_Renderer
         return $result;
     }
 
+    /**
+     * @param Varien_Object $item
+     * @return bool
+     */
     protected function _checkValidProduct(Varien_Object $item)
     {
         $productId = $item->getProductId();
