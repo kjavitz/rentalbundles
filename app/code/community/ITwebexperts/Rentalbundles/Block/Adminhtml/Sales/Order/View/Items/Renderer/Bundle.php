@@ -31,7 +31,7 @@ class ITwebexperts_Rentalbundles_Block_Adminhtml_Sales_Order_View_Items_Renderer
             $endDate = $option['info_buyRequest']['end_date'];
         }
 
-        if ($endDate) {
+        if ($startDate) {
             $result .= '<br />' . $this->__('Start Date: ') . $startDate;
         }
 
