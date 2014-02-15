@@ -35,6 +35,7 @@
                     <bundle_catalog_product_view_type_bundle_option_multi>ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_Option_Multi</bundle_catalog_product_view_type_bundle_option_multi>
                     <checkout_cart_item_renderer_bundle>ITwebexperts_Rentalbundles_Block_Checkout_Cart_Item_Renderer_Bundle</checkout_cart_item_renderer_bundle>
                     <adminhtml_sales_order_view_items_renderer_bundle>ITwebexperts_Rentalbundles_Block_Adminhtml_Sales_Order_View_Items_Renderer_Bundle</adminhtml_sales_order_view_items_renderer_bundle>
+                    <catalog_product_view_rental>ITwebexperts_Rentalbundles_Block_Catalog_Product_View_Rental</catalog_product_view_rental>
                 </rewrite>
             </payperrentals>
         </blocks>
