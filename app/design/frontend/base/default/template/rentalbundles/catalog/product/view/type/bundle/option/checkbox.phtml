@@ -1,11 +1,19 @@
+<style type="text/css">
+    #countryDatePicker {
+        width: 100%;
+    }
+
+    #countryDatePickerDiv {
+        position: absolute;
+        z-index: 1000;
+    }
+</style>
 <script type="text/javascript">
     new ITwebexperts_Rentalbundles_Country_Selector({
         countrySelectorClass: 'dd.rentalbundles select',
         blockSelector: 'dd.rentalbundles',
         startDateSelector: 'div.dateSelectorStart input'
     });
-
-
 </script>
 
 <?php /* @var $this Mage_Bundle_Block_Catalog_Product_View_Type_Bundle_Option_Select */ ?>
