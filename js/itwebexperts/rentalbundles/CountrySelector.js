@@ -4,6 +4,9 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     },
 
     countrySelectors: null,
+    arrivalDates: null,
+    datepicker: null,
+    datepickerCntr: null,
 
     initialize: function (config) {
         Object.extend(this.config, config);
@@ -147,15 +150,21 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
         }
     },
 
+    showPicker: function(el, evt) {
+        Element.show(this.datepickerCntr);
+    },
+
     init: function () {
         this.countrySelectors = $$(this.config.countrySelectorClass);
+        this.arrivalDates = $$(this.config.blockSelector + ' ' + this.config.startDateSelector);
+        this.datepicker = $('countryDatePicker');
+        this.datepickerCntr = $('countryDatePickerDiv');
 
-        jQuery(function ($) {
-            $(this.config.blockSelector + ' ' + this.config.startDateSelector + ', '
-                + this.config.bundleDateInputsSelector).datepick({
-                showStatus: true
-            });
-        }.bind(this));
+        jQuery('#countryDatePicker').datepick({});
+
+        this.arrivalDates.each(function(el) {
+            Event.observe(el, 'click', this.showPicker.bind(this, el));
+        }.bind(this))
 
         this.countrySelectors.each(function (el) {
             Event.observe(el, 'change', this.onCountryChange.bind(this, el));
