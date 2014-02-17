@@ -62,6 +62,11 @@
             <rentalbundles>
                 <class>ITwebexperts_Rentalbundles_Helper</class>
             </rentalbundles>
+            <payperrentals>
+                <rewrite>
+                    <price>ITwebexperts_Rentalbundles_Helper_Price</price>
+                </rewrite>
+            </payperrentals>
         </helpers>
         <resources>
             <rentalbundles_setup>
