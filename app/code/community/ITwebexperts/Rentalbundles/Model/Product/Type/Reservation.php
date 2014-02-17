@@ -26,7 +26,7 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
         // according to start/end dates for each country on FE
         // So we need to pass modified $buyRequest to the parent method in such case.
         // This method only modifies $buyRequest for countries products.
-        $newBuyRequest = $this->_processCountry($buyRequest, $product);
+        $newBuyRequest = $this->processCountry($buyRequest, $product);
         return parent::prepareForCartAdvanced($newBuyRequest ? $newBuyRequest : $buyRequest, $product, $processMode);
     }
 
@@ -37,7 +37,7 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
      * @param Mage_Catalog_Model_Product $product
      * @return Varien_Object|null
      */
-    protected function _processCountry(Varien_Object $buyRequest, Mage_Catalog_Model_Product $product)
+    public function processCountry(Varien_Object $buyRequest, Mage_Catalog_Model_Product $product)
     {
         if (ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY != $product->getRentalbundlesType()) {
             return;
