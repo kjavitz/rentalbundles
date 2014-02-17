@@ -6,6 +6,15 @@
         </ITwebexperts_Rentalbundles>
     </modules>
     <frontend>
+        <routers>
+            <payperrentals_front>
+                <args>
+                    <modules>
+                        <rentalbundles before="ITwebexperts_Payperrentals">ITwebexperts_Rentalbundles</rentalbundles>
+                    </modules>
+                </args>
+            </payperrentals_front>
+        </routers>
         <layout>
             <updates>
                 <rentalbundles>
