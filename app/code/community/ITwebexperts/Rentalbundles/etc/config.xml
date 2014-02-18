@@ -39,6 +39,14 @@
                     </rentalbundles_price_calculation>
                 </observers>
             </payperrentals_bundle_option_calculate_price_before>
+            <render_cart>
+                <observers>
+                    <rentalbundles_render_cart>
+                        <class>rentalbundles/observer</class>
+                        <method>onCartRender</method>
+                    </rentalbundles_render_cart>
+                </observers>
+            </render_cart>
         </events>
     </frontend>
     <global>

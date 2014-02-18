@@ -2,6 +2,8 @@
 
 class ITwebexperts_Rentalbundles_Model_Observer extends ITwebexperts_Payperrentals_Model_Observer
 {
+    const DATETIME_FORMAT = 'm/d/Y';
+
     /**
      * Handles reservation of bundle product.
      * Adds sims to the product buy request.
@@ -180,5 +182,45 @@ class ITwebexperts_Rentalbundles_Model_Observer extends ITwebexperts_Payperrenta
         }
 
         return parent::prepareBuyRequestCartAdvanced($observer);
+    }
+
+    /**
+     * Custom renderer for countries in checkout cart.
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function onCartRender(Varien_Event_Observer $observer)
+    {
+        $data = $observer->getEvent()->getData();
+        $item = $observer->getEvent()->getItem();
+        $result = $observer->getEvent()->getResult();
+        if (!($item instanceof Mage_Sales_Model_Quote_Item)) {
+            return;
+        }
+
+        $children = $item->getChildren();
+        if (!is_array($children) || !count($children)) {
+            return;
+        }
+
+        $options = $result->getResult();
+
+        foreach ($children as $item) {
+            $product = $item->getProduct();
+            if (ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY != $product->getRentalbundlesType()) {
+                continue;
+            }
+
+            $startDate = date(self::DATETIME_FORMAT, strtotime($item->getStartTurnoverBefore()));
+            $endDate = date(self::DATETIME_FORMAT, strtotime($item->getEndTurnoverAfter()));
+
+            $options[] = array(
+                'label' => $item->getName(),
+                'value' => $this->getHelper()->__('Start Date: ') . $startDate . '<br />' . $this->getHelper()->__('End Date: ') . $endDate,
+                'type' => 'reservation',
+            );
+        }
+
+        $result->setResult($options);
     }
 }
