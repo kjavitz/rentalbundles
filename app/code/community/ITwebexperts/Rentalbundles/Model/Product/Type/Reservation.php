@@ -27,6 +27,9 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
         // So we need to pass modified $buyRequest to the parent method in such case.
         // This method only modifies $buyRequest for countries products.
         $newBuyRequest = $this->processCountry($buyRequest, $product);
+        if ($newBuyRequest) {
+            $product->addCustomOption('info_buyRequest', serialize($newBuyRequest->getData()));
+        }
         return parent::prepareForCartAdvanced($newBuyRequest ? $newBuyRequest : $buyRequest, $product, $processMode);
     }
 
@@ -95,6 +98,7 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
         }
 
         $startDate = $countryStartDates[$key];
+        $b = $countryStartDates[0];
         $endDate = $buyRequest->getData('end_date');
         if (isset($countryStartDates[$key + 1]) && $countryStartDates[$key + 1]) {
             $endDate = $countryStartDates[$key + 1];
@@ -111,7 +115,9 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
         $newBuyRequest = clone $buyRequest;
         $newBuyRequest
             ->setData(self::START_DATE_OPTION, $startDate)
-            ->setData(self::END_DATE_OPTION, $endDate);
+            ->setData('read_start_date', $startDate)
+            ->setData(self::END_DATE_OPTION, $endDate)
+            ->setData('read_end_date', $endDate);
 
         return $newBuyRequest;
     }
