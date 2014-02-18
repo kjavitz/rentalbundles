@@ -1,4 +1,5 @@
 <?php
+
 class ITwebexperts_Rentalbundles_Model_Observer extends ITwebexperts_Payperrentals_Model_Observer
 {
     /**
@@ -119,7 +120,49 @@ class ITwebexperts_Rentalbundles_Model_Observer extends ITwebexperts_Payperrenta
     public function onBundleOptionPriceCalculation(Varien_Event_Observer $observer)
     {
         $item = $observer->getEvent()->getItem();
+        $selection = $observer->getEvent()->getSelection();
+        if (!$item || !$selection) {
+            return;
+        }
 
+        $product = Mage::getModel('catalog/product')->load($selection->getProductId());
+        if ($product->getId() && (ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY != $product->getRentalbundlesType())) {
+            return;
+        }
+
+        $data = $observer->getEvent()->getData('data');
+        if (!$item || !$selection || !$data) {
+            return;
+        }
+
+        if (!($item instanceof Mage_Sales_Model_Quote_Item)) {
+            return;
+        }
+
+        $children = $item->getChildren();
+        if (!is_array($children) || !count($children)) {
+            return;
+        }
+
+        $currentItem = null;
+        foreach ($children as $item) {
+            if ($item->getProductId() == $product->getId()) {
+                $currentItem = $item;
+                break;
+            }
+        }
+
+        if (!$currentItem) {
+            return;
+        }
+
+        if (!$currentItem->getStartTurnoverBefore() || !$currentItem->getEndTurnoverAfter()) {
+            return;
+        }
+
+        $data
+            ->setStartDate($currentItem->getStartTurnoverBefore())
+            ->setEndDate($currentItem->getEndTurnoverAfter());
     }
 
     /**
