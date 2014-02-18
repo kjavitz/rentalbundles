@@ -1,5 +1,5 @@
 <?php
-class ITwebexperts_Rentalbundles_Model_Observer
+class ITwebexperts_Rentalbundles_Model_Observer extends ITwebexperts_Payperrentals_Model_Observer
 {
     /**
      * Handles reservation of bundle product.
@@ -111,5 +111,31 @@ class ITwebexperts_Rentalbundles_Model_Observer
     public function getHelper()
     {
         return Mage::helper('rentalbundles');
+    }
+
+    /**
+     * @param Varien_Event_Observer $observer
+     */
+    public function onBundleOptionPriceCalculation(Varien_Event_Observer $observer)
+    {
+        $item = $observer->getEvent()->getItem();
+
+    }
+
+    /**
+     * Prevents modification of $buyRequest for country products.
+     * Because we use modified $buyRequest for such products.
+     *
+     * @param Varien_Event_Observer $observer
+     * @return $this
+     */
+    public function prepareBuyRequestCartAdvanced(Varien_Event_Observer $observer)
+    {
+        $product = $observer->getEvent()->getProduct();
+        if ($product && (ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY == $product->getRentalbundlesType())) {
+            return;
+        }
+
+        return parent::prepareBuyRequestCartAdvanced($observer);
     }
 }
