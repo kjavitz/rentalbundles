@@ -31,14 +31,14 @@
                     </rentalbundles_kit_add_cart>
                 </observers>
             </controller_action_predispatch_checkout_cart_add>
-            <controller_action_predispatch_checkout_cart_add>
+            <payperrentals_bundle_option_calculate_price_before>
                 <observers>
                     <rentalbundles_price_calculation>
                         <class>rentalbundles/observer</class>
                         <method>onBundleOptionPriceCalculation</method>
                     </rentalbundles_price_calculation>
                 </observers>
-            </controller_action_predispatch_checkout_cart_add>
+            </payperrentals_bundle_option_calculate_price_before>
         </events>
     </frontend>
     <global>
@@ -53,7 +53,6 @@
                     <checkout_cart_item_renderer_bundle>ITwebexperts_Rentalbundles_Block_Checkout_Cart_Item_Renderer_Bundle</checkout_cart_item_renderer_bundle>
                     <adminhtml_sales_order_view_items_renderer_bundle>ITwebexperts_Rentalbundles_Block_Adminhtml_Sales_Order_View_Items_Renderer_Bundle</adminhtml_sales_order_view_items_renderer_bundle>
                     <catalog_product_view_rental>ITwebexperts_Rentalbundles_Block_Catalog_Product_View_Rental</catalog_product_view_rental>
-                    <observer>ITwebexperts_Rentalbundles_Model_Observer</observer>
                 </rewrite>
             </payperrentals>
         </blocks>
@@ -64,6 +63,7 @@
             <payperrentals>
                 <rewrite>
                     <product_type_reservation>ITwebexperts_Rentalbundles_Model_Product_Type_Reservation</product_type_reservation>
+                    <observer>ITwebexperts_Rentalbundles_Model_Observer</observer>
                 </rewrite>
             </payperrentals>
         </models>
