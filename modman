@@ -1,0 +1,6 @@
+app/code/community/ITwebexperts/Rentalbundles app/code/community/ITwebexperts/Rentalbundles
+app/design/frontend/base/default/layout/rentalbundles.xml app/design/frontend/base/default/layout/rentalbundles.xml
+app/design/frontend/base/default/template/rentalbundles app/design/frontend/base/default/template/rentalbundles
+app/etc/modules/ITwebexperts_Rentalbundles.xml app/etc/modules/ITwebexperts_Rentalbundles.xml
+js/itwebexperts/rentalbundles js/itwebexperts/rentalbundles
+skin/frontend/base/default/itwebexperts/rentalbundles skin/frontend/base/default/itwebexperts/rentalbundles
