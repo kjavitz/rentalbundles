@@ -5,9 +5,9 @@
             <active>true</active>
             <codePool>community</codePool>
             <depends>
-                <ITwebexperts_Payperrentals />
+                <ITwebexperts_Payperrentals/>
             </depends>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </ITwebexperts_Rentalbundles>
     </modules>
 </config>

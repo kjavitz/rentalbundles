@@ -2,7 +2,7 @@
 <config>
     <modules>
         <ITwebexperts_Rentalbundles>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </ITwebexperts_Rentalbundles>
     </modules>
     <frontend>
@@ -49,6 +49,26 @@
             </render_cart>
         </events>
     </frontend>
+    <adminhtml>
+        <layout>
+            <updates>
+                <rentalbundles>
+                    <file>rentalbundles.xml</file>
+                </rentalbundles>
+            </updates>
+        </layout>
+        <events>
+            <core_block_abstract_prepare_layout_after>
+                <observers>
+                    <rentalbundles_change_bundle_option_block>
+                        <type>singleton</type>
+                        <class>rentalbundles/observer</class>
+                        <method>coreBlockAbstractPrepareLayoutAfter</method>
+                    </rentalbundles_change_bundle_option_block>
+                </observers>
+            </core_block_abstract_prepare_layout_after>
+        </events>
+    </adminhtml>
     <global>
         <blocks>
             <rentalbundles>
@@ -79,6 +99,11 @@
             <rentalbundles>
                 <class>ITwebexperts_Rentalbundles_Helper</class>
             </rentalbundles>
+            <bundle>
+                <rewrite>
+                    <catalog_product_configuration>ITwebexperts_Rentalbundles_Helper_Bundle_Catalog_Product_Configuration</catalog_product_configuration>
+                </rewrite>
+            </bundle>
             <payperrentals>
                 <rewrite>
                     <price>ITwebexperts_Rentalbundles_Helper_Price</price>

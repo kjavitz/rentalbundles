@@ -3,30 +3,6 @@
 class ITwebexperts_Rentalbundles_Block_Checkout_Cart_Item_Renderer_Bundle extends ITwebexperts_Payperrentals_Block_Checkout_Cart_Item_Renderer_Bundle
 {
     /**
-     * Removes SIM cards from bundle options list
-     * Allows to hide SIM cards on checkout cart page.
-     *
-     * @return array
-     */
-    public function getOptionList()
-    {
-        $options = parent::getOptionList();
-        $simCardsTitle = $this->_getSimCardsTitle();
-        if (is_array($options) && ($optionsCount = count($options))) {
-            for ($i = 0; $i < $optionsCount; $i++) {
-                if ($simCardsTitle && isset($options[$i]['label']) && (false !== stripos($options[$i]['label'], $simCardsTitle))) {
-                    // We don't want to display SIM cards
-                    // on FE so we should remove them
-                    // from array
-                    unset($options[$i]);
-                }
-            }
-        }
-
-        return $options;
-    }
-
-    /**
      * Returns module's helper.
      *
      * @return ITwebexperts_Rentalbundles_Helper_Data

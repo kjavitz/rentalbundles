@@ -223,4 +223,22 @@ class ITwebexperts_Rentalbundles_Model_Observer extends ITwebexperts_Payperrenta
 
         $result->setResult($options);
     }
+
+    /**
+     * Change admin edit bundle option block
+     *
+     * @param Varien_Event_Observer $_observer
+     */
+    public function coreBlockAbstractPrepareLayoutAfter(Varien_Event_Observer $_observer)
+    {
+        $_block = $_observer->getEvent()->getBlock();
+        if ($_block->getType() == 'bundle/adminhtml_catalog_product_edit_tab_bundle') {
+            /** @var $_block Mage_Bundle_Block_Adminhtml_Catalog_Product_Edit_Tab_Bundle */
+            $_block->unsetChild('options_box');
+            $_block->setChild('options_box',
+                $_block->getLayout()->createBlock('rentalbundles/adminhtml_catalog_product_edit_tab_bundle_option',
+                    'adminhtml.catalog.product.edit.tab.bundle.option')
+            );
+        }
+    }
 }
