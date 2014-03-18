@@ -8,6 +8,7 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     datepicker: null,
     datepickerCntr: null,
     datapickerAvailable: false,
+    previouseDate: '',
 
     currentInput: null,
 
@@ -196,17 +197,26 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
         Element.hide(this.datepickerCntr);
     },
 
+    emptyArrivalValues: function () {
+        this.arrivalDates.each(function (el) {
+            el.value = '';
+        }.bind(this));
+    },
+
     _hidePicker: function (evt) {
         var disableInput = false;
         if ($$(this.config.requestedDeliverySelector).first().value == '') {
             disableInput = true;
             this.datapickerAvailable = false;
+            this.emptyArrivalValues();
+        }
+        if ($$(this.config.requestedDeliverySelector).first().value != this.previouseDate) {
+            this.previouseDate = $$(this.config.requestedDeliverySelector).first().value;
+            this.datapickerAvailable = false;
+            this.emptyArrivalValues();
         }
         this.arrivalDates.each(function (el) {
             el.disabled = disableInput;
-            if (disableInput) {
-                el.value = '';
-            }
         }.bind(this));
 
         var el = Event.element(evt),
