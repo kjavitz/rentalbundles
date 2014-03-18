@@ -7,6 +7,7 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     arrivalDates: null,
     datepicker: null,
     datepickerCntr: null,
+    datapickerAvailable: false,
 
     currentInput: null,
 
@@ -156,11 +157,31 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
             return;
         }
 
-        var date = new Date(date);
-        $jppr('#countryDatePicker').datepick('selectDateTd', date);
+        var newDate = new Date(date);
+        $jppr('#countryDatePicker').datepick('selectDateTd', newDate);
     },
 
     showPicker: function (el, evt) {
+        var _this = this;
+        if (!_this.datapickerAvailable) {
+            this.datepicker.remove();
+            this.datepickerCntr.insert(this.datapickerBlock);
+            this.datepicker = $('countryDatePicker');
+            $jppr('#countryDatePicker').datepick({
+                beforeShowDay: function (dateObj) {
+                    dateObj.setHours(0, 0, 0, 0);
+                    var requestDelivery = new Date($$(_this.config.requestedDeliverySelector).first().value);
+                    requestDelivery.setHours(0, 0, 0, 0);
+                    if (dateObj.getTime() < requestDelivery.getTime()) {
+                        return [false, 'ui-datepicker-disabled', 'Not Available'];
+                    }
+                    return [true, '', ''];
+                },
+                onSelect: this.onDateSelect.bind(this)
+            });
+            _this.datapickerAvailable = true;
+        }
+
         this.currentInput = el;
         this.setDate(el.value);
         var cntr = '#' + this.datepickerCntr.id,
@@ -176,6 +197,18 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
     },
 
     _hidePicker: function (evt) {
+        var disableInput = false;
+        if ($$(this.config.requestedDeliverySelector).first().value == '') {
+            disableInput = true;
+            this.datapickerAvailable = false;
+        }
+        this.arrivalDates.each(function (el) {
+            el.disabled = disableInput;
+            if (disableInput) {
+                el.value = '';
+            }
+        }.bind(this));
+
         var el = Event.element(evt),
             descendant = !!$(el).up('.datepick-inline');
 
@@ -188,7 +221,7 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
 
     onDateSelect: function (value, date, inst) {
         this.currentInput.value = value;
-        this.hidePicker();
+        this.hidePicker(this);
     },
 
     init: function () {
@@ -196,18 +229,16 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
         this.arrivalDates = $$(this.config.blockSelector + ' ' + this.config.startDateSelector);
         this.datepicker = $('countryDatePicker');
         this.datepickerCntr = $('countryDatePickerDiv');
+        this.datapickerBlock = '<div id="countryDatePicker"></div>';
 
-        $jppr('#countryDatePicker').datepick({
-            onSelect: this.onDateSelect.bind(this)
-        });
-
-        this.arrivalDates.each(function(el) {
+        this.arrivalDates.each(function (el) {
+            if ($$(this.config.requestedDeliverySelector).first().value == '') el.disabled = true;
             Event.observe(el, 'focus', this.showPicker.bind(this, el));
         }.bind(this));
 
         this.countrySelectors.each(function (el) {
             Event.observe(el, 'change', this.onCountryChange.bind(this, el));
-        }.bind(this))
+        }.bind(this));
 
         Event.observe(document, 'click', this._hidePicker.bind(this));
     }
