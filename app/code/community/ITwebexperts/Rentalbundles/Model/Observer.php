@@ -191,7 +191,6 @@ class ITwebexperts_Rentalbundles_Model_Observer extends ITwebexperts_Payperrenta
      */
     public function onCartRender(Varien_Event_Observer $observer)
     {
-        $data = $observer->getEvent()->getData();
         $item = $observer->getEvent()->getItem();
         $result = $observer->getEvent()->getResult();
         if (!($item instanceof Mage_Sales_Model_Quote_Item)) {

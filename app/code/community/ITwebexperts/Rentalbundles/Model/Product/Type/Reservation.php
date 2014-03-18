@@ -50,6 +50,13 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
         if (empty($countryStartDates) || !is_array($countryStartDates)) {
             return;
         }
+        $ppHelper = Mage::helper('payperrentals');
+        foreach ($countryStartDates as $key => $startDate) {
+            if (empty($startDate)) continue;
+            $normalizedDate = $ppHelper->filterDatesOnly(array($startDate), true);
+            $countryStartDates[$key] = $normalizedDate[0];
+        }
+        $buyRequest->setData('country_dates_normalized', true);
 
         $bundle = $this->_getModuleHelper()->initBundle($buyRequest->getProduct());
         if (!$bundle) {
