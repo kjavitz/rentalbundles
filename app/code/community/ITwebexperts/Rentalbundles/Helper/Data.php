@@ -1,6 +1,8 @@
 <?php
+
 class ITwebexperts_Rentalbundles_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    private $_optionsSelectionCache = array();
 
     /**
      * @param Mage_Catalog_Model_Product $product
@@ -24,17 +26,17 @@ class ITwebexperts_Rentalbundles_Helper_Data extends Mage_Core_Helper_Abstract
      * Initialises the bundle product.
      *
      * @param mixed $productId
-     * @return Mage_Core_Model_Product|null
+     * @return Mage_Catalog_Model_Product|null
      */
     public function initBundle($productId)
     {
         if (!$productId) {
-            return;
+            return null;
         }
 
         $product = Mage::getModel('catalog/product')->load($productId);
         if (Mage_Catalog_Model_Product_Type::TYPE_BUNDLE != $product->getTypeId()) {
-            return;
+            return null;
         }
 
         return $product;
@@ -50,21 +52,27 @@ class ITwebexperts_Rentalbundles_Helper_Data extends Mage_Core_Helper_Abstract
     public function getOptionBySelectionType(Mage_Catalog_Model_Product $product, $type)
     {
         if (!$type) {
-            return;
+            return null;
         }
 
-        $options = $this->getOptionsCollection($product);
-        if (!$options) {
-            return;
-        }
+        if (!array_key_exists($product->getId() . ':' . $type, $this->_optionsSelectionCache)) {
+            $options = $this->getOptionsCollection($product);
+            if (!$options) {
+                $this->_optionsSelectionCache[$product->getId() . ':' . $type] = null;
+                return $this->_optionsSelectionCache[$product->getId() . ':' . $type];
+            }
 
-        foreach ($options as $option) {
-            foreach ($option->getSelections() as $selection) {
-                $selection = Mage::getModel('catalog/product')->load($selection->getId());
-                if ($type == $selection->getRentalbundlesType()) {
-                    return $option;
+            foreach ($options as $option) {
+                foreach ($option->getSelections() as $selection) {
+                    $selection = Mage::getModel('catalog/product')->load($selection->getId());
+                    if ($type == $selection->getRentalbundlesType()) {
+                        $this->_optionsSelectionCache[$product->getId() . ':' . $type] = $option;
+                        return $this->_optionsSelectionCache[$product->getId() . ':' . $type];
+                    }
                 }
             }
         }
+
+        return $this->_optionsSelectionCache[$product->getId() . ':' . $type];
     }
 }

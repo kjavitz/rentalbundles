@@ -49,6 +49,17 @@
             </render_cart>
         </events>
     </frontend>
+    <admin>
+        <routers>
+            <payperrentals>
+                <args>
+                    <modules>
+                        <rentalbundles before="ITwebexperts_Payperrentals">ITwebexperts_Rentalbundles</rentalbundles>
+                    </modules>
+                </args>
+            </payperrentals>
+        </routers>
+    </admin>
     <adminhtml>
         <layout>
             <updates>

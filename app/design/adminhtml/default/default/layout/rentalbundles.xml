@@ -7,4 +7,25 @@
             </action>
         </reference>
     </adminhtml_catalog_product_bundle>
+
+
+    <adminhtml_sales_order_create_index>
+        <reference name="head">
+            <action method="addJs">
+                <script>itwebexperts/rentalbundles/adminhtml/country_selector.js</script>
+            </action>
+        </reference>
+    </adminhtml_sales_order_create_index>
+    <PRODUCT_TYPE_bundle>
+        <reference name="product.composite.fieldset.bundle">
+            <action method="addRenderer">
+                <type>multi</type>
+                <block>rentalbundles/adminhtml_bundle_catalog_product_composite_fieldset_options_type_multi</block>
+            </action>
+            <action method="addRenderer">
+                <type>checkbox</type>
+                <block>rentalbundles/adminhtml_bundle_catalog_product_composite_fieldset_options_type_checkbox</block>
+            </action>
+        </reference>
+    </PRODUCT_TYPE_bundle>
 </layout>

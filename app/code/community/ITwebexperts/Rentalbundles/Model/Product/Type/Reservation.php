@@ -43,12 +43,12 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
     public function processCountry(Varien_Object $buyRequest, Mage_Catalog_Model_Product $product)
     {
         if (ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY != $product->getRentalbundlesType()) {
-            return;
+            return null;
         }
 
         $countryStartDates = $buyRequest->getData(self::COUNTRY_START_DATE);
         if (empty($countryStartDates) || !is_array($countryStartDates)) {
-            return;
+            return null;
         }
         $ppHelper = Mage::helper('payperrentals');
         foreach ($countryStartDates as $key => $startDate) {
@@ -58,9 +58,10 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
         }
         $buyRequest->setData('country_dates_normalized', true);
 
-        $bundle = $this->_getModuleHelper()->initBundle($buyRequest->getProduct());
+        $productId = ($buyRequest->getProduct()) ? $buyRequest->getProduct() : $buyRequest->getConfigurate();
+        $bundle = $this->_getModuleHelper()->initBundle($productId);
         if (!$bundle) {
-            return;
+            return null;
         }
 
         $countryOption = $productSelection = null;
@@ -81,38 +82,37 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
         }
 
         if (!$countryOption) {
-            return;
+            return null;
         }
 
         $bundleOptions = $buyRequest->getData(self::BUNDLE_OPTIONS_FIELD);
         if (empty($bundleOptions) || !is_array($bundleOptions)) {
-            return;
+            return null;
         }
 
         if (!isset($bundleOptions[$countryOption->getId()]) || !is_array($bundleOptions[$countryOption->getId()])
             || !count($bundleOptions[$countryOption->getId()])
         ) {
-            return;
+            return null;
         }
 
         $key = array_search($productSelection->getSelectionId(), $bundleOptions[$countryOption->getId()]);
         if (false === $key) {
-            return;
+            return null;
         }
 
         if (!isset($countryStartDates[$key])) {
-            return;
+            return null;
         }
 
         $startDate = $countryStartDates[$key];
-        $b = $countryStartDates[0];
         $endDate = $buyRequest->getData('end_date');
         if (isset($countryStartDates[$key + 1]) && $countryStartDates[$key + 1]) {
             $endDate = $countryStartDates[$key + 1];
         }
 
         if (!$startDate || !$endDate) {
-            return;
+            return null;
         }
 
         // I don't want to modify $buyRequest

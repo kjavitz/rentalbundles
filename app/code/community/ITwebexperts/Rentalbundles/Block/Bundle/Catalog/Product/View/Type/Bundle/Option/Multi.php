@@ -1,4 +1,5 @@
 <?php
+
 class ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_Option_Multi extends ITwebexperts_Payperrentals_Block_Bundle_Catalog_Product_View_Type_Bundle_Option_Multi
 {
     /**
@@ -9,14 +10,9 @@ class ITwebexperts_Rentalbundles_Block_Bundle_Catalog_Product_View_Type_Bundle_O
      */
     protected function _toHtml()
     {
-        $product = parent::getProduct();
         $currentOption = $this->getOption();
-
-        if ($product instanceof Mage_Catalog_Model_Product) {
-            $option = $this->_getModuleHelper()->getOptionBySelectionType($product, ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_SIM);
-            if ($option && $currentOption && ($currentOption->getId() == $option->getId())) {
-                return '';
-            }
+        if (!$currentOption->getCustomerVisibility()) {
+            return '';
         }
         return parent::_toHtml();
     }

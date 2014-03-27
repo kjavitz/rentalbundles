@@ -30,21 +30,21 @@ class ITwebexperts_Rentalbundles_Helper_Price extends ITwebexperts_Payperrentals
     protected function _getItem($option, $product)
     {
         if (!($option instanceof Mage_Sales_Model_Quote_Item_Option)) {
-            return;
+            return null;
         }
 
         if (!($product instanceof Mage_Catalog_Model_Product)) {
-            return;
+            return null;
         }
 
         $item = $option->getItem();
         if (!($item instanceof Mage_Sales_Model_Quote_Item)) {
-            return;
+            return null;
         }
 
         $children = $item->getChildren();
         if (!is_array($children) || !count($children)) {
-            return;
+            return null;
         }
 
         $currentItem = null;
@@ -53,5 +53,7 @@ class ITwebexperts_Rentalbundles_Helper_Price extends ITwebexperts_Payperrentals
                 return $item;
             }
         }
+
+        return null;
     }
 }

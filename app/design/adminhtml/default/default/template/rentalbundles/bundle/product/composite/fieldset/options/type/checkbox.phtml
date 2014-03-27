@@ -1,0 +1,79 @@
+<style type="text/css">
+    #countryDatePicker {
+        width: 100%;
+    }
+
+    #countryDatePickerDiv {
+        position: absolute;
+        z-index: 1000;
+    }
+</style>
+
+<?php /* @var $this Mage_Bundle_Block_Catalog_Product_View_Type_Bundle_Option_Select */ ?>
+<?php /* @var $_option Mage_Bundle_Block_Catalog_Product_View_Type_Bundle_Option */ ?>
+<?php $_option = $this->getOption(); ?>
+<?php $_selections = $_option->getSelections(); ?>
+<?php $_default = $_option->getDefaultSelection(); ?>
+<?php list($_defaultQty, $_canChangeQty) = $this->_getDefaultValues(); ?>
+<?php $tierPriceHtml = ''; ?>
+<div id="countryDatePickerDiv" style="display:none">
+    <div id="countryDatePicker"></div>
+</div>
+<dt>
+    <label for="bundle-option-<?php echo $_option->getId() ?>"<?php if ($_option->getRequired()) echo ' class="required"' ?>><?php echo $this->escapeHtml($_option->getTitle()) ?><?php if ($_option->getRequired()) echo '<em>*</em>' ?></label>
+</dt>
+<?php $i = 0; ?>
+<?php foreach ($_selections as $key => $_selection): ?>
+    <?php $i++; ?>
+    <dd class="rentalbundles" <?php echo 1 < $i && !$this->_isSelected($_selection) ? 'style="display:none;"' : '' ?>>
+        <div class="input-box">
+            <?php /** @var $_selection Mage_Catalog_Model_Product */ ?>
+            <?php if ($this->_showSingle()): ?>
+                <?php echo $this->getSelectionTitlePrice($_selections[0]); ?>
+                <?php if ($_selections[0]->getSelectionCanChangeQty()): ?>
+                    <?php $tierPriceHtml = $this->getTierPriceHtml($_selections[0]); ?>
+                <?php endif; ?>
+                <input type="hidden" name="bundle_option[<?php echo $_option->getId() ?>]" value="<?php echo $_selections[0]->getSelectionId() ?>"/>
+            <?php else: ?>
+                <select id="bundle-option-<?php echo $_option->getId() ?>" onchange="ProductConfigure.bundleControl.changeSelection(this)" name="bundle_option[<?php echo $_option->getId() ?>][]" class="bundle-option-<?php echo $_option->getId() ?><?php if (2 > $i) echo ' required-entry' ?> bundle-option-select change-container-classname">
+                    <option value=""><?php echo $this->__('Choose a selection...') ?></option>
+                    <?php foreach ($_selections as $selection): ?>
+                        <?php $isSelected = false; ?>
+                        <?php if ($this->_isSelected($_selection) && $this->_isSelected($selection) && $_selection->getId() == $selection->getId()): ?>
+                            <?php $isSelected = true; ?>
+                        <?php endif; ?>
+                        <option value="<?php echo $selection->getSelectionId() ?>"<?php if ($isSelected) echo ' selected="selected"' ?><?php if (!$selection->isSaleable()) echo ' disabled="disabled"' ?>><?php echo $this->getSelectionTitlePrice($selection, false) ?></option>
+                    <?php endforeach; ?>
+                </select>
+
+                <div class="datesSelector">
+                    <div class="dateStartLine">
+                        <div class="dateSelectorStart">
+                            <label for="readStartDate<?php echo $i; ?>"><?php echo $this->__('Arrival Date'); ?></label>
+                            <input type="text" id="readStartDate<?php echo $i; ?>" name="country_start_date[]" class="validate-date <?php if (2 > $i) echo ' required-entry' ?>"/>
+                        </div>
+                    </div>
+                </div>
+
+            <?php endif; ?>
+        </div>
+        <span id="bundle-option-<?php echo $_option->getId() ?>-tier-prices"> <?php echo $tierPriceHtml; ?></span>
+    </dd>
+<?php endforeach; ?>
+
+<script type="text/javascript">
+    countrySelector<?php echo $_option->getId() ?> = new RentalBundlesCountrySelector({
+        countrySelectorClass: 'dd.rentalbundles select',
+        blockSelector: 'dd.rentalbundles',
+        startDateSelector: 'div.dateSelectorStart input',
+        requestedDeliverySelector: 'div.dateSelectedCalendar .dateStartLine input',
+        tripReturnSelector: 'div.dateSelectedCalendar .dateEndLine input'
+    });
+    simSelector<?php echo $_option->getId() ?> = new RentalBundlesSimSelection({
+        countrySims: <?php echo $this->getSimJsonConfig($_selections, $_option->getParentId()) ?>,
+        config: {
+            countrySelectorClass: 'dd.rentalbundles select',
+            simSelectorClass: 'dd.rentalbundles-sim select'
+        }
+    });
+</script>
