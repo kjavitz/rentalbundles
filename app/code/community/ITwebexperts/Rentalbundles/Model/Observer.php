@@ -44,6 +44,7 @@ class ITwebexperts_Rentalbundles_Model_Observer extends ITwebexperts_Payperrenta
         $SIMs = array();
         $finalSims = array();
 
+        /** @var $countryOption Mage_Bundle_Model_Option */
         foreach ($countryOption->getSelections() as $country) {
             if (!in_array($country->getSelectionId(), $selectedCountries)) {
                 continue;
@@ -67,7 +68,7 @@ class ITwebexperts_Rentalbundles_Model_Observer extends ITwebexperts_Payperrenta
                 if ($SIMs[$country->getId()]) {
                     // Sorting SIMs by priority
                     arsort($SIMs[$country->getId()]);
-                    $finalSims[] = key($SIMs[$country->getId()]);
+                    $finalSims = array_merge($finalSims, array_keys($SIMs[$country->getId()]));
                 }
             }
         }

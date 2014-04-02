@@ -31,6 +31,15 @@
                     </rentalbundles_kit_add_cart>
                 </observers>
             </controller_action_predispatch_checkout_cart_add>
+            <!--Hook for ajax add to cart extensions-->
+            <controller_action_predispatch_ajax_index_add>
+                <observers>
+                    <rentalbundles_kit_add_cart>
+                        <class>rentalbundles/observer</class>
+                        <method>onProductCardAddAction</method>
+                    </rentalbundles_kit_add_cart>
+                </observers>
+            </controller_action_predispatch_ajax_index_add>
             <payperrentals_bundle_option_calculate_price_before>
                 <observers>
                     <rentalbundles_price_calculation>

@@ -6,6 +6,16 @@ class ITwebexperts_Rentalbundles_Block_Adminhtml_Bundle_Catalog_Product_Composit
     private $_simJsonConfig = array();
 
     /**
+     * Set template
+     *
+     * @return void
+     */
+    protected function _construct()
+    {
+        $this->setTemplate('bundle/product/composite/fieldset/options/type/checkbox.phtml');
+    }
+
+    /**
      * Sets custom template for countries.
      *
      * @return string
