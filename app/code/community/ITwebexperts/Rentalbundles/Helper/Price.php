@@ -2,7 +2,7 @@
 
 class ITwebexperts_Rentalbundles_Helper_Price extends ITwebexperts_Payperrentals_Helper_Price
 {
-    public function _calculatePrice(Mage_Catalog_Model_Product $product, $startingDate, $endingDate, $qty, $customerGroup, $useCurrency = false)
+    public function _calculatePrice($product, $startingDate, $endingDate, $qty, $customerGroup, $useCurrency = false)
     {
         if (ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY == $product->getRentalbundlesType()) {
             $model = Mage::getModel('rentalbundles/product_type_reservation');
