@@ -7,7 +7,7 @@ class ITwebexperts_Rentalbundles_Helper_Price extends ITwebexperts_Payperrentals
         if (ITwebexperts_Rentalbundles_Model_System_Config_Source_Type::TYPE_COUNTRY == $product->getRentalbundlesType()) {
             $model = Mage::getModel('rentalbundles/product_type_reservation');
             $requestParams = Mage::app()->getRequest()->getParams();
-            if (!Mage::helper('payperrentals/config')->isNonSequentialSelect(Mage::app()->getStore()->getId())) {
+            if (!Mage::helper('payperrentals/config')->isNonSequentialSelect(Mage::app()->getStore()->getId()) && !Mage::app()->getRequest()->getParam('is_filtered')) {
                 $filteredDates = array();
                 if (array_key_exists('start_date', $requestParams)) $filteredDates['start_date'] = $requestParams['start_date'];
                 if (array_key_exists('end_date', $requestParams)) $filteredDates['end_date'] = $requestParams['end_date'];

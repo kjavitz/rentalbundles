@@ -27,7 +27,7 @@
                 <observers>
                     <rentalbundles_kit_add_cart>
                         <class>rentalbundles/observer</class>
-                        <method>onProductCardAddAction</method>
+                        <method>preDispatchPriceAndAddActions</method>
                     </rentalbundles_kit_add_cart>
                 </observers>
             </controller_action_predispatch_checkout_cart_add>
@@ -36,10 +36,19 @@
                 <observers>
                     <rentalbundles_kit_add_cart>
                         <class>rentalbundles/observer</class>
-                        <method>onProductCardAddAction</method>
+                        <method>preDispatchPriceAndAddActions</method>
                     </rentalbundles_kit_add_cart>
                 </observers>
             </controller_action_predispatch_ajax_index_add>
+            <!--Get price hook-->
+            <controller_action_predispatch_payperrentals_front_ajax_getprice>
+                <observers>
+                    <rentalbundles_kit_add_cart>
+                        <class>rentalbundles/observer</class>
+                        <method>preDispatchPriceAndAddActions</method>
+                    </rentalbundles_kit_add_cart>
+                </observers>
+            </controller_action_predispatch_payperrentals_front_ajax_getprice>
             <payperrentals_bundle_option_calculate_price_before>
                 <observers>
                     <rentalbundles_price_calculation>

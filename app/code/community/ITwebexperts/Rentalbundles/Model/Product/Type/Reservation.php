@@ -22,6 +22,13 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
             $product = $this->getProduct();
         }
 
+        /**
+         * Change end date for correct price calculation
+         */
+        /*if (!Mage::helper('payperrentals')->useTimes($product->getId()) && $buyRequest->getEndDate()) {
+            $buyRequest->setEndDate(date('Y-m-d', strtotime($buyRequest->getEndDate())) . ' 23:59:59');
+        }*/
+
         // We want to modify booking dates for countries
         // according to start/end dates for each country on FE
         // So we need to pass modified $buyRequest to the parent method in such case.
@@ -29,6 +36,8 @@ class ITwebexperts_Rentalbundles_Model_Product_Type_Reservation extends ITwebexp
         $newBuyRequest = $this->processCountry($buyRequest, $product);
         if ($newBuyRequest) {
             $product->addCustomOption('info_buyRequest', serialize($newBuyRequest->getData()));
+        } else {
+            $product->addCustomOption('info_buyRequest', serialize($buyRequest->getData()));
         }
         return parent::prepareForCartAdvanced($newBuyRequest ? $newBuyRequest : $buyRequest, $product, $processMode);
     }

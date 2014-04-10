@@ -1,0 +1,187 @@
+<?php /** Move this definition to this file. It because all used in this file variables will be undefined after include $templatePhpInitialisations if product not salable. */ ?>
+<?php if (!($this->getProduct() && $this->getProduct()->isSalable() && $this->getProduct()->getIsReservation() != ITwebexperts_Payperrentals_Model_Product_Isreservation::STATUS_RENTAL && $this->getProduct()->getIsReservation() != ITwebexperts_Payperrentals_Model_Product_Isreservation::STATUS_DISABLED)) return; ?>
+<?php $_product = $this->getProduct(); ?>
+<?php
+$templatePhpInitialisations = Mage::getDesign()->getTemplateFilename('payperrentals/calendar/php_initialisations.phtml', array(
+    '_area' => $this->getArea(),
+    '_relative' => false
+));
+
+$templateJsInitialisations = Mage::getDesign()->getTemplateFilename('payperrentals/calendar/js_initialisations.phtml', array(
+    '_area' => $this->getArea(),
+    '_relative' => false
+));
+
+$templateCoreFunctions = Mage::getDesign()->getTemplateFilename('payperrentals/calendar/core_functions.phtml', array(
+    '_area' => $this->getArea(),
+    '_relative' => false
+));
+
+$templateFunctions = Mage::getDesign()->getTemplateFilename('payperrentals/calendar/frontend_functions.phtml', array(
+    '_area' => $this->getArea(),
+    '_relative' => false
+));
+$templateGlobalCalendarFunctions = Mage::getDesign()->getTemplateFilename('rentalbundles/calendar/global_calendar_functions.phtml', array(
+    '_area' => $this->getArea(),
+    '_relative' => false
+));
+
+
+$templateStyles = Mage::getDesign()->getTemplateFilename('payperrentals/calendar/styles.phtml', array(
+    '_area' => $this->getArea(),
+    '_relative' => false
+));
+
+$templateGlobalCalendar = Mage::getDesign()->getTemplateFilename('payperrentals/calendar/global_calendar.phtml', array(
+    '_area' => $this->getArea(),
+    '_relative' => false
+));
+
+?>
+<?php require($templatePhpInitialisations); ?>
+    <div class="reservationCalendarDiv">
+        <h4><?php echo $this->__('Reserve date') ?></h4>
+
+        <?php if ($_product->getTypeId() == ITwebexperts_Payperrentals_Helper_Data::PRODUCT_TYPE_GROUPED): ?>
+            <div class="price-box">
+              <span class="regular-price" id="product-price-<?php echo $_product->getId() . $_jsFunctionPrefix; ?>">
+                 <span class="price" style="display: inline;"></span>
+              </span>
+            </div>
+        <?php elseif ($_product->getTypeId() != ITwebexperts_Payperrentals_Helper_Data::PRODUCT_TYPE_BUNDLE): ?>
+            <?php echo $this->getChildHtml('product-price'); ?>
+        <?php endif; ?>
+
+        <?php if ($this->getChild('product-shipping')): ?>
+            <?php echo $this->getChildHtml('product-shipping'); ?>
+        <?php endif; ?>
+        <div class="calendarTable">
+            <div class="priceList">
+                <?php if ($_configHelper->showMinMaxProductDetailsPage()): ?>
+                    <div class="minmaxPeriod">
+                        <?php if ($_minRentalPeriod > 0) echo $this->__('Minimum Period') . ': ' . ITwebexperts_Payperrentals_Helper_Data::getTextForType($_minRentalNumber, $_minRentalType); ?>
+                        <?php if ($_maxRentalPeriod > 0) echo '<br/>' . $this->__('Maximum Period') . ': ' . ITwebexperts_Payperrentals_Helper_Data::getTextForType($_maxRentalNumber, $_maxRentalType); ?>
+                    </div>
+                <?php endif; ?>
+                <?php //if ($useButtons && $_useGlobalDates): ?>
+                <div class="normalPrice">
+                    <?php echo ITwebexperts_Payperrentals_Helper_Price::getPriceListHtml($_product); ?>
+                </div>
+                <?php //endif; ?>
+                <?php if (floatval($_product->getPayperrentalsDeposit()) > 0): ?>
+                    <div class="depositPrice" style="margin-bottom:20px;">
+                        <?php echo '<b>' . $this->__('Deposit Amount: ') . '</b>' . Mage::helper('core')->currency(floatval($_product->getPayperrentalsDeposit())); ?>
+                    </div>
+                <?php endif; ?>
+                <?php if ($_selectedArray !== false): ?>
+                    <div class="selectedDays">
+
+                        <?php echo '<div class="instock" style="font-size:16px;font-weight:bold">' . $this->__('Item is in stock') . ': ' . '<br/></div>'; ?>
+                        <?php $_p = 0; ?>
+                        <?php foreach ($_selectedArray as $_iDay): ?>
+                            <?php echo '<input type="radio" class="selectedDayRadio" name="selDays" value="' . $_iDay . '"' . ($_p == 0 ? 'checked="checked"' : '') . ' />' . $_iDay . ' ' . $this->__('days') . '<br/>'; ?>
+                            <?php $_p++; ?>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <div class="qty-move-container"></div>
+
+            <div class="reservationInfo"></div>
+
+            <?php if (!$_useGlobalDates): ?>
+                <?php require($templateGlobalCalendar); ?>
+            <?php endif; ?>
+        </div>
+    </div>
+<?php if ($useButtons): ?>
+    <div id="btnList">
+        <?php if ($useButtons && $_useGlobalDates): ?>
+            <?php echo ITwebexperts_Payperrentals_Helper_Price::getPriceList($this->getProduct(), -1); ?>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
+<?php require($templateJsInitialisations); ?>
+<?php require($templateCoreFunctions); ?>
+<?php require($templateFunctions); ?>
+<?php require($templateGlobalCalendarFunctions); ?>
+
+
+    <script type="text/javascript">
+        $jppr(document).ready(function () {
+            $selfID<?php echo $_jsFunctionPrefix ?> = $jppr('<?php echo $_jsContainerPrefix ?>');
+
+            if ($jppr('<?php echo $_jsContainerPrefix ?> #qty').val() == 0) {
+                $jppr('<?php echo $_jsContainerPrefix ?> #qty').val('1');
+            }
+            $jppr('<?php echo $_jsContainerPrefix ?> .qty-container').appendTo('<?php echo $_jsContainerPrefix ?> .qty-move-container');
+            $jppr('<?php echo $_jsContainerPrefix ?> .reservationCalendarDiv').insertBefore('<?php echo $_jsContainerPrefix ?> #product-options-wrapper');
+
+            $jppr('<?php echo $_jsContainerPrefix ?> #qty').change(function () {
+                updateBookedDates<?php echo $_jsFunctionPrefix ?>($selfID<?php echo $_jsFunctionPrefix ?>);
+                updateInputVals<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?>'));
+            });
+
+            $jppr('<?php echo $_jsContainerPrefix ?> .datePicker .datepick-inline').css('width', '100%');
+
+            $jppr('#qty').trigger('change');
+            updatePriceHtml<?php echo $_jsFunctionPrefix ?>(0);
+            $jppr('<?php echo $_jsContainerPrefix ?> .selectedDayRadio').click(function () {
+                var val = $jppr(this).val();
+                selectedToEndPeriod = (parseInt(val) - addStartingDateNumber);
+                $jppr('.calendarSelector').attr('nrSel', (parseInt(val) - addStartingDateNumber + 1));
+                if (selectedToStartPeriod != '') {
+                    if ($jppr('<?php echo $_jsContainerPrefix ?>').data('selected') == 'start') {
+                        if ($jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val() != '') {
+                            $jppr('<?php echo $_jsContainerPrefix ?>').data('wait', 1);
+                            var startDate = splitDateTime<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val());
+                            startDate = Date.parseExact(startDate[0], '<?php echo $_locDateFormat;?>');
+                            console.log(startDate);
+                            $selfID<?php echo $_jsFunctionPrefix ?>.find('.datePicker').datepick('selectDateTd', startDate);
+                            $jppr('<?php echo $_jsContainerPrefix ?>').data('wait', 0);
+                        }
+                    }
+                    $selfID<?php echo $_jsFunctionPrefix ?>.find('.datePicker').datepick('selectDateTd', Date.parseExact(selectedToStartPeriod, 'yyyy-MM-dd'));
+                }
+            });
+            if ($('shipping_method_select_box') == null || $('shipping_method_select_box').value != 'null' || ($('shipping_method_select_box').value == 'null' && $('zip_code').value != '')) {
+                $jppr('<?php echo $_jsContainerPrefix ?> .selectedDayRadio:checked').trigger('click');
+            }
+
+            $jppr('<?php echo $_jsContainerPrefix ?> .btn-cart').wrap('<div class="over-btn" style="float:left" />');
+            $jppr('<?php echo $_jsContainerPrefix ?> .over-btn').mousedown(function () {
+                <?php if( $_useGlobalDates): ?>
+                $jppr('<?php echo $_jsContainerPrefix ?> .btn-cart').removeAttr('disabled');
+                <?php endif ?>
+
+                if ($jppr('<?php echo $_jsContainerPrefix ?> .btn-cart[disabled]').length > 0) {
+                    if ($jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val() == '' || $jppr('<?php echo $_jsContainerPrefix ?> .readEndDate').val() == '') {
+                        alert(pleaseSelectMessage);
+                    } else {
+                        alert(noPriceMessage);
+                    }
+                }
+            });
+
+            if (typeof bundle !== 'undefined') {
+                for (var option in bundle.config.selected) {
+                    if (bundle.config.options[option]) {
+                        for (var i = 0; i < bundle.config.selected[option].length; i++) {
+                            if (bundle.config.options[option].selections[bundle.config.selected[option][i]].typeid == 'reservation') {
+                                $jppr('<?php echo $_jsContainerPrefix ?> input[name="bundle_option_qty[' + option + ']"]').attr('onblur', '');
+                                $jppr('<?php echo $_jsContainerPrefix ?> input[name="bundle_option_qty[' + option + ']"]').attr('onkeyup', '');
+                            }
+                        }
+                    }
+                }
+            }
+
+            $jppr('<?php echo $_jsContainerPrefix ?> input[name^="bundle_option_qty"]').each(function () {
+                qtyDefaultArr[$jppr(this).attr('id')] = $jppr(this).val();
+            });
+            <?php //else: ?>
+            <?php //endif; ?>
+        });
+    </script>
+
+<?php require($templateStyles); ?>

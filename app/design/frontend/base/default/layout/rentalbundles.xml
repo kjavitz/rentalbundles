@@ -118,4 +118,11 @@
             </action>
         </reference>
     </sales_order_printcreditmemo>
+    <PRODUCT_TYPE_bundle>
+        <reference name="product.info.payperrentals">
+            <action method="setTemplate">
+                <template>rentalbundles/catalog/product/view_rental.phtml</template>
+            </action>
+        </reference>
+    </PRODUCT_TYPE_bundle>
 </layout>

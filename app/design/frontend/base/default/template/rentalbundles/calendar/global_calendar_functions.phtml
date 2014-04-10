@@ -1,0 +1,502 @@
+<script type="text/javascript">
+
+splitDateTime<?php echo $_jsFunctionPrefix ?> = function (ddString) {
+    var charSplitter = ' ';
+    if (ddString.indexOf(':') > 0) {
+        var nLoc = ddString.indexOf(':') - 1;
+        while (parseInt(ddString[nLoc]) >= 0) {
+            nLoc = nLoc - 1;
+        }
+        charSplitter = ddString[nLoc];
+    }
+
+    return ddString.split(charSplitter);
+};
+
+updateInputVals<?php echo $_jsFunctionPrefix ?> = function (selfObj) {
+    if (useTimes && $jppr('<?php echo $_jsContainerPrefix ?> .start_time').length > 0) {
+        var date1 = splitDateTime<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val());
+        var date2 = splitDateTime<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?> .readEndDate').val());
+        $jppr('<?php echo $_jsContainerPrefix ?> .start_date').val(date1[0] + ' ' + $jppr('<?php echo $_jsContainerPrefix ?> .start_time').val());
+        $jppr('<?php echo $_jsContainerPrefix ?> .end_date').val(date2[0] + ' ' + $jppr('<?php echo $_jsContainerPrefix ?> .end_time').val());
+    }
+    if ($jppr('<?php echo $_jsContainerPrefix ?> .start_date').val() != '' && $jppr('<?php echo $_jsContainerPrefix ?> .end_date').val() != '') {
+        <?php if(!isset($isAdminGlobal) || $isAdminGlobal == false): ?>
+        <?php if(!isset($isFrontendGlobal) || $isFrontendGlobal == false): ?>
+        calculatePrice<?php echo $_jsFunctionPrefix ?>(selfObj);
+        <?php else: ?>
+        updateInitialsGlobal();
+        <?php endif; ?>
+        <?php else: ?>
+        updateInitials();
+        <?php endif; ?>
+    } else {
+        $jppr('<?php echo $_jsContainerPrefix ?> .btn-cart').each(function () {
+            $(this).disabled = true;
+        });
+    }
+
+};
+function updateInitialsGlobal(url) {
+    if (typeof $jppr('<?php echo $_jsContainerPrefix ?>').data('wait_initials') === 'undefined') {
+        $jppr('<?php echo $_jsContainerPrefix ?>').data('wait_initials', 1);
+        $jppr.ajax({
+            cache: false,
+            dataType: 'json',
+            type: 'post',
+            url: '<?php echo Mage::getUrl("payperrentals_front/ajax/setDateInitial/",array())?>',
+            data: $jppr('<?php echo $_jsContainerPrefix ?>').find('*').serialize(),
+            beforeSend: function () {
+                $jppr('#ajax-panel').html('<div class="loading"><img src="/skin/frontend/default/default/images/opc-ajax-loader.gif" alt="Loading..." /></div>');
+            },
+            success: function (data) {
+                $jppr('#ajax-panel').empty();
+                varienGlobalEvents.fireEvent('update_initial_global_success', {data: data, url: url});
+                $jppr('<?php echo $_jsContainerPrefix ?>').removeData('wait_initials');
+            }
+        });
+    }
+}
+
+createCalendar<?php echo $_jsFunctionPrefix ?> = function (selfObj) {
+    if ($jppr('<?php echo $_jsContainerPrefix ?> .datePicker').length > 0) {
+        $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').datepick({
+            minDate: (typeof $jppr('<?php echo $_jsContainerPrefix ?>').data('pprMinDate') === "undefined" ? Date.parseExact('<?php echo date("Y-m-d", Mage::getModel('core/date')->timestamp(time()));?>', 'yyyy-MM-dd') : $jppr('<?php echo $_jsContainerPrefix ?>').data('pprMinDate') ),
+            maxDate: (typeof $jppr('<?php echo $_jsContainerPrefix ?>').data('pprMaxDate') === "undefined" ? null : $jppr('<?php echo $_jsContainerPrefix ?>').data('pprMaxDate') ),
+            monthsToShow: <?php echo Mage::getStoreConfig(ITwebexperts_Payperrentals_Helper_Data::XML_PATH_APPEARANCE_CALENDAR_PAGES);?>,
+            rangeSelect: <?php echo $_useNonsequential?'false':'true';//this will be an option when force_start_date to be today?>,
+            rangeSeparator: ',',
+            <?php if($_useNonsequential):?>
+            multiSelect: 15, // Maximum number of selectable dates
+            multiSeparator: ',', // Text between multiple dates
+            <?php endif;?>
+            changeMonth: false,
+            firstDay: 0,
+            changeYear: false,
+            numberOfMonths: <?php echo Mage::getStoreConfig(ITwebexperts_Payperrentals_Helper_Data::XML_PATH_APPEARANCE_CALENDAR_PAGES);?>,
+            showStatus: true,
+            beforeShowDay: function (dateObj) {
+                dateObj.setHours(0, 0, 0, 0);
+                var dateFormatted = $jppr.datepick.formatDate('yy-m-d', dateObj);
+                today = Date.parseExact('<?php echo date("Y-m-d", Mage::getModel('core/date')->timestamp(time()));?>', 'yyyy-MM-dd');
+                if ($jppr.inArray(dayShortNames[dateObj.getDay()], disabledDays) > -1) {
+                    return [false, 'ui-datepicker-disabled ui-datepicker-shipable', 'Disabled By Admin'];
+                } else if ($jppr.inArray(dateFormatted, bookedDates) > -1 || isDisabled == true) {
+                    return [false, 'ui-datepicker-reserved', 'Reserved'];
+                } else if ($jppr.inArray(dateFormatted, disabledDatesPadding) > -1 && disabledWithMessage == false) {
+                    return [false, 'ui-datepicker-disabled', 'Disabled by Admin'];
+                } else if ($jppr.inArray(dateFormatted, blockedDates) > -1) {
+                    return [false, 'ui-datepicker-disabled', 'Blocked by Admin'];
+                } else if (($jppr('<?php echo $_jsContainerPrefix ?>').data('global_field_selected') == 'start' && $jppr.inArray(dateObj.getDay(), disabledStartWeekDays) > -1) || ($jppr('<?php echo $_jsContainerPrefix ?>').data('global_field_selected') == 'end' && $jppr.inArray(dateObj.getDay(), disabledEndWeekDays) > -1)) {
+                    return [false, 'ui-datepicker-disabled', 'Not available for selected shipping method'];
+                }
+                else if (today > dateObj) {
+                    return [false, '', 'Not available'];
+                }
+                return [true, '', '<?php echo $this->__('Available'); ?>'];
+            },
+            onSelect: function (value, date, inst) {
+                $jppr('<?php echo $_jsContainerPrefix ?>').attr('isenter', 0);
+                var dates = value.split(',');
+                <?php if(!$_useNonsequential):?>
+                var noEndDate = false;
+                if (dates[1] == dates[0] && $jppr('<?php echo $_jsContainerPrefix ?>').data('selected') == 'start') {
+                    noEndDate = true;
+                }
+
+                if (autoSelectEndDate && noEndDate && $jppr('<?php echo $_jsContainerPrefix ?>').data('wait') == '0') {
+                    var stDate1 = new Date(dates[0]);
+                    stDate1.setDate(stDate1.getDate() + parseInt(selectedToEndPeriod));
+                    $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').datepick('selectDateTd', stDate1);
+                    return;
+                }
+
+                $jppr('<?php echo $_jsContainerPrefix ?> .start_date').val($jppr.formatDateTime('<?php echo $_datestr;?>', new Date(dates[0])));
+                $jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val($jppr.formatDateTime('<?php echo $_datestr;?>', new Date(dates[0])));
+
+                if (!noEndDate) {
+                    $jppr('<?php echo $_jsContainerPrefix ?> .readEndDate').val($jppr.formatDateTime('<?php echo $_datestr;?>', new Date(dates[1])));
+                    $jppr('<?php echo $_jsContainerPrefix ?> .end_date').val($jppr.formatDateTime('<?php echo $_datestr;?>', new Date(dates[1])));
+                    updateInputVals<?php echo $_jsFunctionPrefix ?>(selfObj);
+                    if ($jppr('<?php echo $_jsContainerPrefix ?> .start_date').val() != $jppr('<?php echo $_jsContainerPrefix ?> .end_date').val()) {
+                        if (!isDisabledByTimes) {
+                            $jppr('<?php echo $_jsContainerPrefix ?> .btn-cart').each(function () {
+                                $(this).disabled = false;
+                                $jppr('<?php echo $_jsContainerPrefix ?> .errorShow').hide();
+                            });
+                        }
+                    }
+                    $jppr('<?php echo $_jsContainerPrefix ?> .datePickerDiv').hide();
+                } else {
+                    $jppr('<?php echo $_jsContainerPrefix ?> .readEndDate').val('');
+                    $jppr('<?php echo $_jsContainerPrefix ?> .end_date').val('');
+                }
+
+                if ($jppr('<?php echo $_jsContainerPrefix ?> .day-detail-container') != undefined && $jppr('<?php echo $_jsContainerPrefix ?> .day-detail-container').length > 0) {
+                    createBusyTime<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?>').data('selected'));
+                }
+
+
+                <?php endif;?>
+                <?php if($_useNonsequential):?>
+                if (dates[0] == dates[1]) {
+                    $jppr('<?php echo $_jsContainerPrefix ?> .start_date').val(dates[0]);
+                    $jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val(dates[0]);
+                } else {
+                    valueArr = value.split(',');
+                    idates = '';
+                    key = valueArr.length - 1;
+                    for (i = 0; i < valueArr.length; i++) {
+                        if (i != key) {
+                            idates = idates + $jppr.formatDateTime('<?php echo $_datestr;?>', new Date(valueArr[i])) + ',';
+                        } else {
+                            idates = idates + $jppr.formatDateTime('<?php echo $_datestr;?>', new Date(valueArr[i]));
+                        }
+                    }
+                    $jppr('<?php echo $_jsContainerPrefix ?> .start_date').val(idates);
+                    $jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val(idates);
+
+                    $jppr('<?php echo $_jsContainerPrefix ?> .end_date').val(idates);
+                    $jppr('<?php echo $_jsContainerPrefix ?> .readEndDate').val(idates);
+                }
+                updateInputVals<?php echo $_jsFunctionPrefix ?>(selfObj);
+                <?php endif;?>
+                if ($jppr('<?php echo $_jsContainerPrefix ?>').data('mousedown') == 1) {
+
+                } else {
+                    <?php if(!ITwebexperts_Payperrentals_Helper_Data::useNonSequential()): ?>
+                    $jppr('<?php echo $_jsContainerPrefix ?> .datePickerDiv').fadeOut("fast");
+                    <?php endif; ?>
+                }
+            },
+            onDayClick: function (date, inst, td) {
+                var dateFormatted = $jppr.datepick.formatDate('yy-m-d', date);
+
+                if ($jppr.inArray(dateFormatted, disabledDatesPadding) > -1 && disabledWithMessage) {
+                    alert(disabledMessage);
+                    return false;
+                }
+                var allowSelectionMin = true;
+                var allowSelection = true;
+                var allowSelectionMax = true;
+                <?php if(!$_useNonsequential):?>
+                if ($jppr('<?php echo $_jsContainerPrefix ?>').data('selected') == 'start') {
+                    allowSelection = true;
+                    for (var k = 0; k < bookedDates.length; k++) {
+                        bDateArr = bookedDates[k].split('-');
+                        bDate = new Date(parseInt(bDateArr[0]), parseInt(bDateArr[1]) - 1, parseInt(bDateArr[2]));
+                        if (typeof $jppr('<?php echo $_jsContainerPrefix ?>').data('selectedDate') != 'undefined' && $jppr('<?php echo $_jsContainerPrefix ?>').data('selectedDate') != '' && $jppr('<?php echo $_jsContainerPrefix ?>').data('selectedDate').getTime() <= bDate.getTime() && date.getTime() >= bDate.getTime()) {
+                            allowSelection = false;
+                        }
+                    }
+                    if (typeof $jppr('<?php echo $_jsContainerPrefix ?>').data('selectedDate') != 'undefined' && $jppr('<?php echo $_jsContainerPrefix ?>').data('selectedDate') != '') {
+                        allowSelectionMin = !(date.getTime() - $jppr('<?php echo $_jsContainerPrefix ?>').data('selectedDate').getTime() + 24 * 60 * 60 * 1000 <= minRentalPeriod - addStartingDatePeriod);
+                        allowSelectionMax = !((date.getTime() - $jppr('<?php echo $_jsContainerPrefix ?>').data('selectedDate').getTime() > maxRentalPeriod) && maxRentalPeriod != 0);
+                    }
+                }
+                selected = (typeof $jppr('<?php echo $_jsContainerPrefix ?>').data('selected') == 'undefined' || $jppr('<?php echo $_jsContainerPrefix ?>').data('selected') == '' || $jppr('<?php echo $_jsContainerPrefix ?>').data('selected') == 'end' ? 'start' : 'end');
+                if (selected == 'end') {
+                    if (allowSelectionMin == false) {
+                        alert(minRentalPeriodMessage);
+                        return false;
+                    }
+                    if (allowSelectionMax == false) {
+                        alert(maxRentalPeriodMessage);
+                        return false;
+                    }
+                    if (allowSelection == false) {
+                        alert(betweenMessage);
+                        $jppr('<?php echo $_jsContainerPrefix ?> .btn-resfreshCalendar').trigger('click');
+                        return false;
+                    }
+                }
+
+
+                selectedDate = '';
+
+                if (selected == 'start') {
+                    selectedDate = date;
+                }
+
+                $jppr('<?php echo $_jsContainerPrefix ?>').data('selected', selected);
+                $jppr('<?php echo $_jsContainerPrefix ?>').data('selectedDate', selectedDate);
+                <?php endif;?>
+                <?php if($_useNonsequential):?>
+                var myVal = $jppr('<?php echo $_jsContainerPrefix ?> .start_date').val();
+                var dates = myVal.split(',');
+                var nrDates = dates.length;
+                //allowSelectionMin = !(nrDates * 60 * 60 * 1000 <= minRentalPeriod);
+                //allowSelectionMax = !((nrDates * 60 * 60 * 1000 > maxRentalPeriod) && maxRentalPeriod != 0);
+
+                //end check here
+                //if (allowSelectionMin == false) {
+                //  alert(minRentalPeriodMessage);
+                //here I should disable the rent button and on else I should enable it.
+                //}
+                //if (allowSelectionMax == false) {
+                //  alert(maxRentalPeriodMessage);
+                //here I should disable the rent button and on else I should enable it.
+                //}
+                <?php endif;?>
+                return this;
+            }
+        });
+        //varienGlobalEvents.fireEvent('calendar_js_init_vars');
+
+        $jppr('<?php echo $_jsContainerPrefix ?> .btn-cart').each(function () {
+            if ($jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val() != '' && $jppr('<?php echo $_jsContainerPrefix ?> .readEndDate').val() != '') {
+                $(this).disabled = false;
+                $jppr('<?php echo $_jsContainerPrefix ?> .errorShow').hide();
+            } else {
+                $(this).disabled = true;
+            }
+        });
+    }
+};
+
+refreshCalendar<?php echo $_jsFunctionPrefix ?> = function ($selfID) {
+    if ($jppr('<?php echo $_jsContainerPrefix ?>').data('selected') == 'start') {
+        $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').datepick('setDate', 0);
+    } else if ($jppr('<?php echo $_jsContainerPrefix ?>').data('selected') == 'end') {
+        $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').datepick('setDate', -1);
+    }
+    $jppr('<?php echo $_jsContainerPrefix ?>').data('selected', '');
+    $jppr('<?php echo $_jsContainerPrefix ?>').data('selectedDate', '');
+
+    $jppr('<?php echo $_jsContainerPrefix ?> .start_date').val('').trigger('change');
+    $jppr('<?php echo $_jsContainerPrefix ?> .end_date').val('').trigger('change');
+    $jppr('<?php echo $_jsContainerPrefix ?> .end_date').val('').trigger('change');
+    $jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val('');
+    $jppr('<?php echo $_jsContainerPrefix ?> .readEndDate').val('');
+    //varienGlobalEvents.fireEvent('refresh_calendar');
+    $jppr('<?php echo $_jsContainerPrefix ?> .btn-cart').each(function () {
+        $(this).disabled = true;
+        if ($jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val() == '' || $jppr('<?php echo $_jsContainerPrefix ?> .readEndDate').val() == '') {
+            $jppr('<?php echo $_jsContainerPrefix ?> .errorShow').html('');
+        } else {
+            $jppr('<?php echo $_jsContainerPrefix ?> .errorShow').html(noPriceMessage);
+        }
+        $jppr('<?php echo $_jsContainerPrefix ?> .errorShow').show();
+    });
+}
+
+</script>
+
+<script type="text/javascript">
+
+<?php if(!isset($isAdmin) || $isAdmin == false): ?>
+$jppr(document).ready(function () {
+    <?php endif; ?>
+
+
+    $jppr('<?php echo $_jsContainerPrefix ?> .readStartDate, <?php echo $_jsContainerPrefix ?> .readEndDate').keyup(function (event) {
+        $jppr(this).val('');
+    });
+    $jppr('<?php echo $_jsContainerPrefix ?>').attr('isenter', 0);
+    $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').mouseenter(function (event) {
+        $jppr('<?php echo $_jsContainerPrefix ?>').attr('isenter', 1);
+    }).mouseleave(function (event) {
+        $jppr('<?php echo $_jsContainerPrefix ?>').attr('isenter', 0);
+    });
+    $jppr('<?php echo $_jsContainerPrefix ?>').data('mousedown', 0);
+    $jppr('<?php echo $_jsContainerPrefix ?> .readStartDate, <?php echo $_jsContainerPrefix ?> .readEndDate').mousedown(function (event) {
+        if ($$('.shipMethods').length == 0 || (($('shipping_method_select_box') == null && $('shipping_method').value != '') || ($('shipping_method_select_box') != null && ($('shipping_method_select_box').value != 'null' || ($('shipping_method_select_box').value == 'null' && $('zip_code').value != ''))))) {
+            $jppr('<?php echo $_jsContainerPrefix ?> .readStartDate, <?php echo $_jsContainerPrefix ?> .readEndDate').attr('disabled', false);
+            <?php /**
+                   * We should recreate calendar when click to start/end input field, because we have
+                   * disable start/end days configuration, and we can do this only in beforeShow event.
+                   * this event executed when calendar created or clicked next/prev button
+                   */ ?>
+            if ($jppr(this).hasClass('readStartDate')) {
+                $jppr('<?php echo $_jsContainerPrefix ?>').data('global_field_selected', 'start');
+            } else if ($jppr(this).hasClass('readEndDate')) {
+                $jppr('<?php echo $_jsContainerPrefix ?>').data('global_field_selected', 'end');
+            }
+            $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').remove();
+            $jppr('<?php echo $_jsContainerPrefix ?> .datePickerDiv').prepend('<div class="datePicker"></div>');
+            createCalendar<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?> .datePicker'));
+
+            if ($jppr(this).hasClass('readStartDate') || autoSelectEndDate == false) {
+                var pos = $jppr(this).position();
+                $jppr('<?php echo $_jsContainerPrefix ?> .datePickerDiv').css('top', (pos.top + 30) + 'px');
+                $jppr('<?php echo $_jsContainerPrefix ?> .datePickerDiv').css('left', (pos.left + 0) + 'px');
+                $jppr('<?php echo $_jsContainerPrefix ?> .datePickerDiv').fadeIn("fast");
+
+                var dd = splitDateTime<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?> .start_date').val());
+                if (dd != '') {
+                    var stDate = Date.parseExact(dd[0], '<?php echo $_locDateFormat;?>');
+                    var currentDate = new Date();
+                    if (currentDate.getTime() < stDate.getTime()) {
+                        var monthCount = stDate.getMonth() - new Date().getMonth();
+                        $jppr.datepick._adjustDate('#' + $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').attr('id'), +monthCount, 'M');
+                    }
+                }
+                if ($jppr(this).hasClass('readStartDate')) {
+                    if ($jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val() != '') {
+                        if ($jppr('<?php echo $_jsContainerPrefix ?> .readEndDate').val() != '') {
+                            var ed = splitDateTime<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?> .end_date').val());
+                            var endDate = Date.parseExact(ed[0], '<?php echo $_locDateFormat;?>');
+                        }
+                        $jppr('<?php echo $_jsContainerPrefix ?>').data('mousedown', 1);
+                        $jppr('<?php echo $_jsContainerPrefix ?>').data('selected', '');
+                        if (typeof endDate != 'undefined') {
+                            $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').datepick('selectDateTd', stDate);
+                            if (autoSelectEndDate == false) {
+                                $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').datepick('selectDateTd', endDate);
+                            }
+                        }
+                        $jppr('<?php echo $_jsContainerPrefix ?>').data('mousedown', 0);
+                        $jppr('<?php echo $_jsContainerPrefix ?> .datePickerDiv').fadeIn("fast");
+                    }
+                } else {
+                    if ($jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val() != '') {
+                        <?php /** Adjust end calendar show month by start date month */ ?>
+                        $jppr('<?php echo $_jsContainerPrefix ?>').data('mousedown', 1);
+                        $jppr('<?php echo $_jsContainerPrefix ?>').data('selected', '');
+                        $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').datepick('selectDateTd', stDate);
+                        $jppr('<?php echo $_jsContainerPrefix ?>').data('mousedown', 0);
+                        $jppr('<?php echo $_jsContainerPrefix ?> .datePickerDiv').fadeIn("fast");
+                    }
+                }
+            }
+        }
+    });
+    createCalendar<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?>'));
+
+    if ($$('.shipMethods').length != 0 && $('shipping_method_select_box') != null && $('shipping_method_select_box').value == 'null' && $('zip_code').value == '') {
+        $jppr('<?php echo $_jsContainerPrefix ?> .readStartDate, <?php echo $_jsContainerPrefix ?> .readEndDate').attr('disabled', true);
+    }
+
+    <?php //initialization base on previous selected dates?>
+    $jppr('<?php echo $_jsContainerPrefix ?>').data('wait', 0);
+    <?php if(!$_useNonsequential): ?>
+    <?php if($_startDateInit): ?>
+    if ($jppr('<?php echo $_jsContainerPrefix ?> .datePicker').length > 0) {
+        if ($$('.shipMethods').length == 0 || (($('shipping_method_select_box') == null && $('shipping_method').value != '') || ($('shipping_method_select_box') != null && ($('shipping_method_select_box').value != 'null' || ($('shipping_method_select_box').value == 'null' && $('zip_code').value != ''))))) {
+            $jppr('<?php echo $_jsContainerPrefix ?>').data('wait', 1);
+            var currentDate = new Date();
+            if (typeof Date.parseExact('<?php echo $_startDateInit;?>', 'yyyy-MM-dd') !== 'undefined' && currentDate.getTime() < Date.parseExact('<?php echo $_startDateInit;?>', 'yyyy-MM-dd').getTime()) {
+                var monthCount = Date.parseExact('<?php echo $_startDateInit;?>', 'yyyy-MM-dd').getMonth() - new Date().getMonth();
+                $jppr.datepick._adjustDate('#' + $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').attr('id'), +monthCount, 'M');
+            }
+            $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').datepick('selectDateTd', Date.parseExact('<?php echo $_startDateInit;?>', 'yyyy-MM-dd'));
+            if (autoSelectEndDate == false) {
+                <?php if(strtotime($_endDateInit) - strtotime($_startDateInit) >= $_minRentalPeriod): ?>
+                $jppr('<?php echo $_jsContainerPrefix ?> .datePicker').datepick('selectDateTd', Date.parseExact('<?php echo $_endDateInit;?>', 'yyyy-MM-dd'));
+                <?php endif; ?>
+            }
+            $jppr('<?php echo $_jsContainerPrefix ?>').data('wait', 0);
+        }
+    }
+    <?php endif; ?>
+
+    <?php else: ?>
+    <?php if($_startDateInit): ?>
+    $jppr('<?php echo $_jsContainerPrefix ?>').data('wait', 1);
+    $jppr('<?php echo $_jsContainerPrefix ?> .start_date').val('<?php echo Mage::getSingleton('core/session')->getData('startDateInitial');?>').trigger('change');
+    $jppr('<?php echo $_jsContainerPrefix ?> .readStartDate').val('<?php echo $_startDateInit;?>');
+    $jppr('<?php echo $_jsContainerPrefix ?>').data('wait', 0);
+    <?php endif; ?>
+    <?php endif; ?>
+    <?php if($_startTimeInit): ?>
+    $jppr('<?php echo $_jsContainerPrefix ?>').data('wait', 1);
+    $jppr('<?php echo $_jsContainerPrefix ?> .start_time').val('<?php echo $_startTimeInit;?>');
+    $jppr('<?php echo $_jsContainerPrefix ?> .end_time').val('<?php echo $_endTimeInit;?>');
+    $jppr('<?php echo $_jsContainerPrefix ?>').data('wait', 0);
+    <?php endif; ?>
+    updateInputVals<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?>'));
+
+    $jppr('<?php echo $_jsContainerPrefix ?> .btn-resfreshCalendar').click(function (event) {
+        refreshCalendar<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?>'));
+    });
+    if (!$jppr('<?php echo $_jsContainerPrefix ?> .datePicker').length) {
+        $jppr('<?php echo $_jsContainerPrefix ?> .price-box').hide();
+    }
+    document.observe('click', function (e) {
+        var el = $(e.target);
+        var isDatePicker = false;
+        while (el) {
+            if (el !== window.document && el.hasAttribute('class') && el.hasClassName('datePickerDiv')) {
+                isDatePicker = true;
+                break;
+            }
+            if (el !== window.document && el.hasAttribute('class') && el.hasClassName('innerdpjppr')) {
+                isDatePicker = true;
+                break;
+            }
+            if (el !== window.document && el.hasAttribute('class') && el.hasClassName('readStartDate')) {
+                isDatePicker = true;
+                break;
+            }
+            if (el !== window.document && el.hasAttribute('class') && el.hasClassName('readEndDate')) {
+                isDatePicker = true;
+                break;
+            }
+            if (el !== window.document && el.hasAttribute('class') && el.hasClassName('ui-datepicker-next')) {
+                isDatePicker = true;
+                break;
+            }
+            if (el !== window.document && el.hasAttribute('class') && el.hasClassName('ui-datepicker-prev')) {
+                isDatePicker = true;
+                break;
+            }
+            el = el.parentNode;
+        }
+        if (/*!e.target.descendantOf('<?php echo substr($_jsContainerPrefix,1); ?>') &&*/ !isDatePicker && $jppr('<?php echo $_jsContainerPrefix ?>').attr('isenter') != 1 /*&& $('datePickerDiv') != null && $('datePickerDiv').style.display != 'none'*/) {
+            $jppr('<?php echo $_jsContainerPrefix ?> .datePickerDiv').fadeOut('fast');
+        }
+    });
+    <?php if (!$_configHelper->isHotelMode(Mage::app()->getStore()->getId()) && $_useTimes > 0): ?>
+
+    <?php if ($_product && $_product->getShowTimeGrid() || $_configHelper->isShowTimeGrid(Mage::app()->getStore()->getId())): ?>
+    <?php $_timeHeaderAr = ITwebexperts_Payperrentals_Helper_Timebox::getTimeOptionsArray($_storeOpen, $_storeClose, array(), 'label') ?>
+    <?php if (count($_timeHeaderAr)): ?>
+    createBusyTime<?php echo $_jsFunctionPrefix ?>(false);
+
+    $jppr('<?php echo $_jsContainerPrefix ?> .start_time, <?php echo $_jsContainerPrefix ?> .end_time').change(function (event) {
+        selectByRange<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?> .start_time').val(), $jppr('<?php echo $_jsContainerPrefix ?> .end_time').val());
+    });
+
+    $jppr('<?php echo $_jsContainerPrefix ?> [name=refreshCalendar]').click(function () {
+        createBusyTime<?php echo $_jsFunctionPrefix ?>(false);
+    });
+    <?php endif;?>
+    <?php endif; ?>
+    $jppr('<?php echo $_jsContainerPrefix ?> .start_time, <?php echo $_jsContainerPrefix ?> .end_time').change(function (event) {
+        updateInputVals<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?>'));
+    });
+    <?php endif; ?>
+
+    <?php if(!isset($isAdmin) || $isAdmin == false): ?>
+    <?php $_jsContainerPrefixUpdate = ''/*$_jsContainerPrefix*/;?>
+    <?php else: ?>
+    <?php $_jsContainerPrefixUpdate = '#product_composite_configure_form_fields';?>
+    <?php endif; ?>
+
+    $jppr('<?php echo $_jsContainerPrefixUpdate ?> .super-attribute-select').change(function () {
+        updateBookedDates<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?>'));
+        updateInputVals<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?>'));
+    });
+
+    $jppr('<?php echo $_jsContainerPrefixUpdate ?> input[name^="bundle_option"], <?php echo $_jsContainerPrefix ?> select[name^="bundle_option"]').change(function () {
+        var countryDate = $jppr('<?php echo $_jsContainerPrefixUpdate ?> input[bundle_id=' + $jppr(this).attr('id') + ']');
+        if (!countryDate.length || countryDate.val() != '') {
+            updateBookedDates<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?>'));
+            updateInputVals<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?>'));
+        }
+    });
+
+    $jppr('<?php echo $_jsContainerPrefixUpdate ?> input[name^="options"]').change(function () {
+        updateInputVals<?php echo $_jsFunctionPrefix ?>($jppr('<?php echo $_jsContainerPrefix ?>'));
+    });
+
+    <?php if(!isset($isAdmin) || $isAdmin == false): ?>
+});
+<?php endif; ?>
+
+</script>
+<?php
+$resultObject = new Varien_Object();
+Mage::dispatchEvent('calendar_ready', array('js_container_prefix' => $_jsContainerPrefix, 'js_function_prefix' => $_jsFunctionPrefix, 'is_admin_global' => (isset($isAdminGlobal) ? $isAdminGlobal : false), 'is_frontend_global' => (isset($isFrontendGlobal) ? $isFrontendGlobal : false), 'is_admin' => (isset($isAdmin) ? $isAdmin : false), 'quote_item_id' => isset($quoteItemId) ? $quoteItemId : -1, 'quote_item' => isset($quoteItem) ? $quoteItem : null, 'result' => $resultObject));
+echo $resultObject->getReturn();
+?>

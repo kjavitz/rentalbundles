@@ -10,7 +10,7 @@ class ITwebexperts_Rentalbundles_Model_Observer extends ITwebexperts_Payperrenta
      *
      * @param Varien_Event_Observer $observer
      */
-    public function onProductCardAddAction(Varien_Event_Observer $observer)
+    public function preDispatchPriceAndAddActions(Varien_Event_Observer $observer)
     {
         $request = Mage::app()->getRequest();
 
@@ -105,6 +105,36 @@ class ITwebexperts_Rentalbundles_Model_Observer extends ITwebexperts_Payperrenta
         $bundleOptions[$simOption->getId()] = $chosenSims;
         $request->setParam(ITwebexperts_Rentalbundles_Model_Product_Type_Reservation::BUNDLE_OPTIONS_FIELD, $bundleOptions);
 
+
+        /**
+         * Filter dates
+         * */
+        $_useNonsequential = Mage::helper('payperrentals/config')->isNonSequentialSelect(Mage::app()->getStore()->getId());
+        if (!$request->getParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::END_DATE_OPTION)) {
+            $request->setParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::END_DATE_OPTION, $request->getParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::START_DATE_OPTION));
+        }
+        if (!$_useNonsequential) {
+            if (!$request->getParam('is_filtered') && !ITwebexperts_Payperrentals_Helper_Date::isFilteredDate($request->getParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::START_DATE_OPTION))) {
+                $params = array('start_date' => $request->getParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::START_DATE_OPTION), 'end_date' => $request->getParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::END_DATE_OPTION));
+                $params = ITwebexperts_Payperrentals_Helper_Data::filterDates($params, true);
+                $startingDateFiltered = $params['start_date'];
+                $endingDateFiltered = $params['end_date'];
+                $request->setParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::START_DATE_OPTION, $startingDateFiltered);
+                $request->setParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::END_DATE_OPTION, $endingDateFiltered);
+                $request->setParam('is_filtered', true);
+            }
+        }
+        if ($request->getParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::START_DATE_OPTION) == $request->getParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::END_DATE_OPTION)) {
+            if (date('H:i:s', strtotime($request->getParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::START_DATE_OPTION))) == '00:00:00') {
+                $request->setParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::END_DATE_OPTION, date('Y-m-d', strtotime($request->getParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::START_DATE_OPTION))) . ' 23:59:59');
+            }
+        }
+        /**
+         * Change end date for correct price calculation
+         */
+        if (!Mage::helper('payperrentals')->useTimes($bundle->getId()) && $request->getParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::END_DATE_OPTION)) {
+            $request->setParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::END_DATE_OPTION, date('Y-m-d', strtotime($request->getParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::END_DATE_OPTION))) . ' 23:59:59');
+        }
     }
 
     /**

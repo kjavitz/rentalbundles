@@ -231,6 +231,12 @@ var ITwebexperts_Rentalbundles_Country_Selector = Class.create({
 
     onDateSelect: function (value, date, inst) {
         this.currentInput.value = value;
+        var bundleSelectionId = this.currentInput.readAttribute('bundle_id');
+        if (bundleSelectionId != '') {
+            var bundleSelection = $(bundleSelectionId);
+            jQuery('#' + bundleSelectionId).trigger('change');
+            bundleSelection.fire('change');
+        }
         this.hidePicker(this);
     },
 
