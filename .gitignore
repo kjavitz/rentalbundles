@@ -9,3 +9,4 @@ errors/local.xml
 #develop files
 .DS_Store
 .idea
+prepare-deploy

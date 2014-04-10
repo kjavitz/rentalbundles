@@ -39,6 +39,14 @@ class ITwebexperts_Rentalbundles_AjaxController extends ITwebexperts_Payperrenta
                 $newParams['end_date'] = $paramsAll['end_date'];
                 if (!$this->getRequest()->getParam('is_filtered')) {
                     $newParams = ITwebexperts_Payperrentals_Helper_Data::filterDates($newParams, true);
+                    /**
+                     * Change end date for correct price calculation
+                     */
+                    if (!Mage::helper('payperrentals')->useTimes($Product->getId()) && isset($newParams['end_date'])) {
+                        $newParams['end_date'] = date('Y-m-d', strtotime($newParams['end_date'])) . ' 23:59:59';
+                        $this->getRequest()->setParam(ITwebexperts_Payperrentals_Model_Product_Type_Reservation::END_DATE_OPTION, $newParams['end_date']);
+                    }
+                    $this->getRequest()->setParam('is_filtered', true);
                 }
                 $startingDate = $newParams['start_date'];
                 $endingDate = $newParams['end_date'];
